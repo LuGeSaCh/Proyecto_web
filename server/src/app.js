@@ -19,6 +19,6 @@ app.get("/api/cars", (req, res) => {
     { id: 3, make: "Chevrolet", model: "Camaro", year: 2019, pricePerDay: 50, imageURL: "https://di-uploads-pod1.dealerinspire.com/mikeandersonchevychicagoredesign/uploads/2019/04/2019-Camaro-1LT.png" },
   ];
   res.json({ cars });
-});
+}); // este es solo un ejemplo momentaneo
 
 export default app;

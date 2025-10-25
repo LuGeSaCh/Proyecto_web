@@ -3,7 +3,6 @@ import React from "react";
 function CarCard({ car }) {
     const { make, model, year, pricePerDay, imageURL} = car;
 
-    
     return (
         <div className="car-card">
             <img src={imageURL} alt={`${make} ${model}`} />

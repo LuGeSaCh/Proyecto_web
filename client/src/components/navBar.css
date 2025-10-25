@@ -1,0 +1,75 @@
+/* client/src/components/Navbar.css */
+.navbar {
+  background-color: var(--color-white); /* Usa variable de app.css */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  padding: 12px 0;
+  position: sticky; /* Fija la barra arriba */
+  top: 0;
+  z-index: 1000; /* Asegura que esté sobre otros elementos */
+  width: 100%;
+}
+
+.navbar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between; /* Espacia el logo y el menú */
+  align-items: center; /* Centra verticalmente */
+}
+
+.navbar-logo {
+  color: var(--color-primary); /* Usa variable de app.css */
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.navbar-menu {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+
+.navbar-item {
+  margin-left: 20px;
+}
+
+.navbar-link {
+  color: var(--color-text-light); /* Usa variable de app.css */
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
+  padding: 8px 12px;
+  border-radius: var(--radius); /* Usa variable de app.css */
+}
+
+.navbar-link:hover {
+  color: var(--color-primary); /* Usa variable de app.css */
+}
+
+/* Estilos para los botones simulados */
+.navbar-button {
+  border: 1px solid var(--color-primary-dark);
+  color: var(--color-primary-dark);
+}
+
+.navbar-button:hover {
+  background-color: #eef;
+  color: var(--color-primary-dark);
+}
+
+.navbar-button-primary {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border-color: var(--color-primary);
+}
+
+.navbar-button-primary:hover {
+  background-color: var(--color-primary-dark);
+  color: var(--color-white);
+  border-color: var(--color-primary-dark);
+}
