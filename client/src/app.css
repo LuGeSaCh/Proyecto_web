@@ -1,0 +1,122 @@
+/* app.css */
+:root {
+  --color-primary: #007bff;
+  --color-primary-dark: #0056b3;
+  --color-text: #333;
+  --color-text-light: #555;
+  --color-bg: #f8f9fa;
+  --color-white: #ffffff;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --radius: 8px;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  color: var(--color-primary);
+  margin-bottom: 0;
+}
+
+.app-container > p {
+  text-align: center;
+  font-size: 1.1rem;
+  color: var(--color-text-light);
+  margin-top: 5px;
+  margin-bottom: 40px;
+}
+
+/* --- Cuadrícula del Catálogo --- */
+.catalog-grid {
+  display: grid;
+  /* Crea columnas automáticas:
+     - Mínimo 300px de ancho
+     - Máximo 1 fracción (se ajustan para llenar el espacio)
+  */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+/* --- Tarjeta de Carro (CarCard) --- */
+.car-card {
+  background: var(--color-white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden; /* Para que la imagen no se salga */
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.car-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.car-card-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover; /* Asegura que la imagen cubra el espacio */
+}
+
+.car-card-body {
+  padding: 20px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.car-card-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0 0 10px 0;
+}
+
+.car-card-price {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 0 0 20px 0;
+}
+
+.car-card-price span {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: var(--color-text-light);
+}
+
+.car-card-button {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-top: auto; /* Empuja el botón al fondo de la tarjeta */
+}
+
+.car-card-button:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.error-message {
+  color: #d93025;
+  text-align: center;
+  font-size: 1.1rem;
+}
