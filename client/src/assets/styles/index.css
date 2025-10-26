@@ -24,8 +24,8 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
+  /* display: flex;      <-- Elimina esta línea */
+  /* place-items: center; <-- Elimina esta línea */
   min-width: 320px;
   min-height: 100vh;
 }
