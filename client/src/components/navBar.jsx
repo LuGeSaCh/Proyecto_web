@@ -1,8 +1,8 @@
 
 import React from "react";
-import "./Navbar.css"; 
+import "./navBar.css"; 
 
-function Navbar() {
+function navBar() {
   return (
     <nav className="navbar">
       <div className="navbar-container">
@@ -28,4 +28,4 @@ function Navbar() {
   );
 }
 
-export default Navbar;
+export default navBar;

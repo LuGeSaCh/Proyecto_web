@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "./App.css";
-import CarCard from "./components/carCard.jsx";
-import Navbar from "./components/navBar.jsx";
-
+import CarCard from "./components/CarCard.jsx";
+import NavBar from "./components/navBar.jsx";
 function App() {
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -57,7 +56,7 @@ function App() {
 
   return (
     <>
-    <Navbar/>
+    <NavBar/>
     <div className="app-container">
       <h1>Rentados</h1>
       <p>Tu plataforma de confianza para rentar vehículos</p>
