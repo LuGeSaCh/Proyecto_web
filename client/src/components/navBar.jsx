@@ -1,26 +1,46 @@
-
 import React from "react";
-import "./navBar.css"; 
+import { Link } from "react-router-dom";
+import "./navBar.css";
 
-function navBar() {
+function NavBar() {
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        <a href="/" className="navbar-logo">
-          Rentados 
-        </a>
+        <Link to="/" className="navbar-logo">
+          Rentados
+        </Link>
         <ul className="navbar-menu">
           <li className="navbar-item">
-            <a href="#catalog" className="navbar-link">Catálogo</a>
+            <Link to="/" className="navbar-link">
+              Catálogo
+            </Link>
           </li>
           <li className="navbar-item">
-            <a href="#about" className="navbar-link">Nosotros</a>
+            <Link to="/rent-your-car" className="navbar-link">
+              Renta tu carro
+            </Link>
           </li>
           <li className="navbar-item">
-            <a href="#login" className="navbar-link navbar-button">Iniciar Sesión</a>
+            <Link to="/nosotros" className="navbar-link">
+              Sobre nosotros
+            </Link>
           </li>
           <li className="navbar-item">
-            <a href="#signup" className="navbar-link navbar-button navbar-button-primary">Registrarse</a>
+            <Link to="/ayuda" className="navbar-link">
+              Ayuda
+            </Link>
+          </li>
+          <li className="navbar-item">
+            <Link to="/login" className="navbar-link navbar-button">
+              Iniciar Sesión
+            </Link>
+          </li>
+          <li className="navbar-item">
+            <Link
+              to="/signup"
+              className="navbar-link navbar-button navbar-button-primary">
+              Registrarse
+            </Link>
           </li>
         </ul>
       </div>
@@ -28,4 +48,4 @@ function navBar() {
   );
 }
 
-export default navBar;
+export default NavBar;

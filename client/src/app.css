@@ -43,9 +43,9 @@ h1 {
 .catalog-grid {
   display: grid;
   /* Crea columnas automáticas:
-     - Mínimo 300px de ancho
-     - Máximo 1 fracción (se ajustan para llenar el espacio)
-  */
+       - Mínimo 300px de ancho
+       - Máximo 1 fracción (se ajustan para llenar el espacio)
+    */
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 24px;
 }

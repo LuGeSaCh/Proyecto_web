@@ -1,69 +1,32 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { Routes, Route } from "react-router-dom";
 import "./App.css";
-import CarCard from "./components/CarCard.jsx";
 import NavBar from "./components/navBar.jsx";
+import HomePage from "./pages/HomePage.jsx"; // Importa la pagina de inicio
+import AboutPage from "./pages/AboutPage.jsx"; // Importa la pagina "Nosotros"
+import HelpPage from "./pages/HelpPage.jsx";  //Import Signup
+import LoginPage from "./pages/Login.jsx";//Import Login
+import SignupPage from "./pages/SignupPage.jsx";  //Import Signup
+import RentYourCarPage from "./pages/RentYourCarPage.jsx"; //Import RentYourCarPage
+
 function App() {
-  const [cars, setCars] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    let mounted = true;
-    axios
-      .get("http://localhost:3000/api/cars")
-      .then((res) => {
-        if (!mounted) return;
-        const payload = res.data?.cars ?? res.data;
-        setCars(Array.isArray(payload) ? payload : payload ? [payload] : []);
-        setLoading(false);
-      })
-      .catch((err) => {
-        if (mounted) {
-          console.error("Error fetching cars:", err);
-          setError("Error al cargar los carros.");
-          setLoading(false);
-          setCars([]);
-        } // no romper si falla la API
-      });
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  //Renderizado condicional
-  const renderContent = () => {
-    if (loading) {
-      return <p>Cargando catálogo...</p>; // mientras carga los datos
-    }
-
-    if (error) {
-      return <p className="error-message">{error}</p>; // por ejemplo si la API falla
-    }
-
-    if (cars.length === 0) {
-      return <p>No hay carros disponibles en este momento.</p>; // si no hay carros
-    }
-
-    return (
-      <div className="catalog-grid">
-        {cars.map((car) => (
-          <CarCard key={car.id} car={car} /> //recorremos el array de carros y renderizamos una tarjeta por cada uno
-        ))}
-      </div>
-    );
-  };
-
   return (
     <>
-    <NavBar/>
-    <div className="app-container">
-      <h1>Rentados</h1>
-      <p>Tu plataforma de confianza para rentar vehículos</p>
-      {renderContent()}
-    </div>
+      <NavBar />
+      <div className="app-container">
+        <h1>Rentados</h1>
+        <p>Tu mejor decisión sobre ruedas!</p> {/*slogan*/}
+
+        {/* Aqui se renderizara el componente de la página actual */}
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/nosotros" element={<AboutPage />} />
+          <Route path="/ayuda" element={<HelpPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/rent-your-car" element={<RentYourCarPage />} />
+        </Routes>
+      </div>
     </>
   );
 }
-
 export default App;
