@@ -16,8 +16,18 @@ function NavBar() {
             </Link>
           </li>
           <li className="navbar-item">
+            <Link to="/rent-your-car" className="navbar-link">
+              Renta tu carro
+            </Link>
+          </li>
+          <li className="navbar-item">
             <Link to="/nosotros" className="navbar-link">
-              Nosotros
+              Sobre nosotros
+            </Link>
+          </li>
+          <li className="navbar-item">
+            <Link to="/ayuda" className="navbar-link">
+              Ayuda
             </Link>
           </li>
           <li className="navbar-item">
@@ -28,8 +38,7 @@ function NavBar() {
           <li className="navbar-item">
             <Link
               to="/signup"
-              className="navbar-link navbar-button navbar-button-primary"
-            >
+              className="navbar-link navbar-button navbar-button-primary">
               Registrarse
             </Link>
           </li>
