@@ -8,10 +8,10 @@ function HomePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [yearFilter, setYearFilter] = useState(""); 
-  const [priceOrder, setPriceOrder] = useState(""); 
-  const [pickupDate, setPickupDate] = useState(""); 
-  const [returnDate, setReturnDate] = useState(""); 
+  const [yearFilter, setYearFilter] = useState("");
+  const [priceOrder, setPriceOrder] = useState("");
+  const [pickupDate, setPickupDate] = useState("");
+  const [returnDate, setReturnDate] = useState("");
 
   useEffect(() => {
     axios
@@ -36,21 +36,21 @@ function HomePage() {
         car.marca.toLowerCase().includes(term) ||
         car.modelo.toLowerCase().includes(term);
 
-      //Filtro de año
+      //Filtro de año (CORREGIDO: Usando car.anio y .includes)
       const matchesYear = yearFilter
-        ? car.year.toString() === yearFilter
+        ? car.anio.toString().includes(yearFilter)
         : true;
 
       return matchesSearch && matchesYear;
     })
     .sort((a, b) => {
-      //Ordenar por precio
+      //Ordenar por precio (CORREGIDO: Usando precioPorDia)
       if (priceOrder === "asc") {
-        return a.pricePerDay - b.pricePerDay; 
+        return a.precioPorDia - b.precioPorDia;
       } else if (priceOrder === "desc") {
-        return b.pricePerDay - a.pricePerDay; 
+        return b.precioPorDia - a.precioPorDia;
       }
-      return 0; 
+      return 0;
     });
 
   if (loading) return <p>Cargando catálogo...</p>;
