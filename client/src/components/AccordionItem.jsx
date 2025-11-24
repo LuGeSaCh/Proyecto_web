@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import './AccordionItem.css';
 
 /**
- * Componente reutilizable para un elemento de acordeón (pregunta/respuesta).
+ * Componente reutilizable para un elemento de acordeon (pregunta/respuesta).
  * @param {object} props - Propiedades del componente.
- * @param {string} props.title - La pregunta (titulo del acordeón).
- * @param {React.ReactNode} props.children - El contenido a mostrar/ocultar (la respuesta).
+ * @param {string} props.title - titulo del acordeon.
+ * @param {React.ReactNode} props.children - El contenido a mostrar/ocultar.
  */
 function AccordionItem({ title, children }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -24,7 +24,7 @@ function AccordionItem({ title, children }) {
                 <span className="title-text">{title}</span>
                 {/* Ícono de flecha que rota con el estado */}
                 <span className="accordion-icon">
-                    {/* Usamos un triángulo simple o puedes usar un ícono de librería si tienes una instalada (ej. react-icons) */}
+                    {/* Usamos un triangulo simple */}
                     &#9660;
                 </span>
             </button>

@@ -49,7 +49,7 @@
     transform: rotate(180deg);
 }
 
-/* Contenedor de contenido para la animación de altura */
+/* Contenedor de contenido para la animacion de altura */
 .accordion-content-wrapper {
     max-height: 0;
     overflow: hidden;
@@ -58,7 +58,7 @@
 }
 
 .accordion-content-wrapper.open {
-    /* Establecer una altura máxima que siempre será mayor que el contenido */
+    /* Establecer una altura max  */
     max-height: 500px;
 }
 
