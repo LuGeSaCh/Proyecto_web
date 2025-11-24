@@ -4,7 +4,6 @@
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    /* Alinea arriba en lugar de centrar */
     padding: 40px 20px;
 }
 
