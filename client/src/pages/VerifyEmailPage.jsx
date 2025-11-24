@@ -1,24 +1,24 @@
-import React, { useEffect, useState, useRef } from "react"; // 1. Importamos useRef
+import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./VerifyEmailPage.css";
 
 function VerifyEmailPage() {
   const [searchParams] = useSearchParams();
-  const [status, setStatus] = useState("verifying");
   const navigate = useNavigate();
-  const processed = useRef(false); //para evitar doble ejecución
+  
+  const token = searchParams.get("token");
+
+  const [status, setStatus] = useState("waiting");
 
   useEffect(() => {
-    const token = searchParams.get("token");
-
     if (!token) {
       setStatus("error");
-      return;
     }
+  }, [token]);
 
-    if (processed.current) return;
-    processed.current = true; 
+  const handleConfirm = () => {
+    setStatus("verifying"); 
 
     axios.post("http://localhost:3001/api/verify-email", { token })
       .then((response) => {
@@ -32,15 +32,38 @@ function VerifyEmailPage() {
         console.error(error);
         setStatus("error");
       });
-  }, [searchParams, navigate]);
+  };
+
+  const handleCancel = () => {
+    navigate("/");
+  };
 
   return (
     <div className="verify-container">
       <div className="verify-card">
+        
+        {status === "waiting" && (
+          <>
+            <h2>Confirma tu verificación</h2>
+            <p>Estás a un paso de activar tu cuenta en <strong>Rentados</strong>.</p>
+            <p>Haz clic en el botón de abajo para validar tu correo electrónico.</p>
+            
+            <div className="verify-actions">
+                <button onClick={handleConfirm} className="verify-button confirm-btn">
+                Confirmar Cuenta
+                </button>
+                <button onClick={handleCancel} className="verify-button cancel-btn">
+                Cancelar
+                </button>
+            </div>
+          </>
+        )}
+
         {status === "verifying" && (
           <>
-            <h2>Verificando tu correo...</h2>
+            <h2>Verificando...</h2>
             <div className="spinner"></div>
+            <p>Por favor espera un momento.</p>
           </>
         )}
 
@@ -48,15 +71,14 @@ function VerifyEmailPage() {
           <>
             <h2 className="success-text">¡Cuenta Verificada!</h2>
             <p>Tu correo ha sido confirmado exitosamente.</p>
-            <p>Redirigiendo al inicio de sesión...</p>
+            <p className="redirect-text">Redirigiendo al inicio de sesión...</p>
           </>
         )}
 
         {status === "error" && (
           <>
-            <h2 className="error-text">Error o Enlace Expirado</h2>
-            <p>Es posible que tu cuenta ya haya sido verificada o el enlace no sirva.</p>
-            <p>Intenta iniciar sesión para comprobarlo.</p>
+            <h2 className="error-text">Enlace no váli do</h2>
+            <p>Este enlace de verificación es inválido o ya ha expirado.</p>
             <button onClick={() => navigate("/login")} className="verify-button">
               Ir al Login
             </button>

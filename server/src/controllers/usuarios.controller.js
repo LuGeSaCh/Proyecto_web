@@ -112,7 +112,9 @@ export const login = async (req, res) => {
       nombre: user.nombre,
       correo: user.correo,
       rol: user.rol,
+      telefono: user.telefono,
       departamento: user.departamento,
+      fechaCreacion: user.fechaCreacion,
       token,
     });
 
@@ -136,6 +138,20 @@ export const getAllUsers = async (req, res) => {
     res.json(users);
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+// Eliminar usuario
+export const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const [result] = await pool.query("DELETE FROM Usuarios WHERE id = ?", [id]);
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+    return res.status(200).json({ message: "Usuario eliminado exitosamente" });
+    
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
   }
 };
 /* 
