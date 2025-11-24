@@ -7,7 +7,6 @@ const procesarPagoConBanco = async (datosTarjeta, monto) => {
     
     // Simulamos un retraso de red de 2 segundos (para que se sienta real)
     setTimeout(() => {
-      // LÓGICA DE VALIDACIÓN SIMULADA:
       // Si el número de tarjeta no viene o termina en "0000", rechazamos el pago.
       if (!datosTarjeta || !datosTarjeta.numero || datosTarjeta.numero.endsWith("0000")) {
         reject(new Error("Fondos insuficientes o tarjeta rechazada por el banco."));
