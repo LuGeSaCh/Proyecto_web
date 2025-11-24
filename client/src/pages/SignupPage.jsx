@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios"; // Asegúrate de importar axios si vas a conectar con el backend
 import "./SignupPage.css";
-import elSalvadorData from "../utils/constants.js";
+import {elSalvadorData} from "../utils/constants.js";
 
 function SignupPage() {
     const [name, setName] = useState("");
