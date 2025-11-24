@@ -7,11 +7,16 @@ function HomePage() {
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Filtros existentes
   const [searchTerm, setSearchTerm] = useState("");
   const [yearFilter, setYearFilter] = useState("");
   const [priceOrder, setPriceOrder] = useState("");
   const [pickupDate, setPickupDate] = useState("");
   const [returnDate, setReturnDate] = useState("");
+
+  // 1. Estado para el carro seleccionado
+  const [selectedCar, setSelectedCar] = useState(null);
 
   useEffect(() => {
     axios
@@ -28,28 +33,34 @@ function HomePage() {
       });
   }, []);
 
+  // Funcion para calcular precio
+  const calculateDays = () => {
+    if (!pickupDate || !returnDate) return 1; // Si no hay fechas, cobramos min 1 dia
+    const start = new Date(pickupDate);
+    const end = new Date(returnDate);
+
+    const diffTime = end - start;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    return diffDays > 0 ? diffDays : 1;
+  };
+
+  const days = calculateDays();
+
   const processedCars = cars
     .filter((car) => {
-      // Filtro de modelo/marca
       const term = searchTerm.toLowerCase();
       const matchesSearch =
         car.marca.toLowerCase().includes(term) ||
         car.modelo.toLowerCase().includes(term);
-
-      //Filtro de año (CORREGIDO: Usando car.anio y .includes)
       const matchesYear = yearFilter
         ? car.anio.toString().includes(yearFilter)
         : true;
-
       return matchesSearch && matchesYear;
     })
     .sort((a, b) => {
-      //Ordenar por precio (CORREGIDO: Usando precioPorDia)
-      if (priceOrder === "asc") {
-        return a.precioPorDia - b.precioPorDia;
-      } else if (priceOrder === "desc") {
-        return b.precioPorDia - a.precioPorDia;
-      }
+      if (priceOrder === "asc") return a.precioPorDia - b.precioPorDia;
+      if (priceOrder === "desc") return b.precioPorDia - a.precioPorDia;
       return 0;
     });
 
@@ -58,6 +69,76 @@ function HomePage() {
 
   return (
     <div className="home-page-container">
+
+      {/*Parte de descripcion (Visible solo al seleccionar un carro) */}
+      {selectedCar && (
+        <div className="booking-summary" style={{
+          backgroundColor: '#e3f2fd',
+          padding: '20px',
+          borderRadius: '12px',
+          border: '1px solid #90caf9',
+          marginBottom: '20px',
+          animation: 'fadeIn 0.5s'
+        }}>
+          <div style={{ display: 'flex', gap: '20px' }}>
+
+            {/*Imagen del carro*/}
+            <div style={{ flex: '0 0 150px' }}>
+              <img
+                src={selectedCar.imagenURL}
+                alt={`${selectedCar.marca} ${selectedCar.modelo}`}
+                style={{
+                  width: '100%',
+                  height: '100px',
+                  objectFit: 'cover',
+                  borderRadius: '8px',
+                  border: '1px solid #ccc',
+                  backgroundColor: '#fff'
+                }}
+              />
+            </div>
+
+            {/*Info del carro*/}
+            <div style={{ flex: 1 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+                <div>
+                  <h2 style={{ marginTop: 0, color: '#0d47a1', fontSize: '1.5rem' }}>Resumen de tu elección</h2>
+                  <h3 style={{ margin: '5px 0' }}>{selectedCar.marca} {selectedCar.modelo} ({selectedCar.anio})</h3>
+                  <p style={{ margin: '5px 0', fontSize: '0.9rem', color: '#555' }}>{selectedCar.descripcion}</p>
+                </div>
+
+                {/* Btn para cerrar el resumen */}
+                <button
+                  onClick={() => setSelectedCar(null)}
+                  style={{ background: 'transparent', border: 'none', color: '#666', cursor: 'pointer', fontSize: '1.2rem' }}
+                  title="Cerrar resumen"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <hr style={{ borderColor: '#bbdefb', margin: '15px 0' }} />
+
+          {/*Calculo del precio total */}
+          <div className="price-calculation">
+            <p>
+              Precio por día: <strong>${selectedCar.precioPorDia}</strong> <br />
+              Días seleccionados: <strong>{days}</strong> ({pickupDate || 'Hoy'} a {returnDate || 'Mañana'})
+            </p>
+            <h2 style={{ color: '#2e7d32' }}>
+              Total a Pagar: ${(selectedCar.precioPorDia * days).toFixed(2)}
+            </h2>
+
+            <button className="car-card-button" style={{ width: '100%', marginTop: '10px', fontSize: '1.2rem' }}>
+              Confirmar Reserva
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/*Filtros*/}
       <div className="filters-container">
         <h2 className="catalog-title"> Selecciona tu alquiler</h2>
         <div className="filter-group search-group">
@@ -118,7 +199,8 @@ function HomePage() {
       ) : (
         <div className="catalog-grid">
           {processedCars.map((car) => (
-            <CarCard key={car.id} car={car} />
+            // Importante: Pasamos la fun setSelectedCar
+            <CarCard key={car.id} car={car} onSelect={setSelectedCar} />
           ))}
         </div>
       )}
