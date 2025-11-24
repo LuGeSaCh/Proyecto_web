@@ -1,0 +1,70 @@
+/* Estilos para el contenedor del acordeón (se usarán en HelpPage) */
+.accordion-list {
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    border-radius: var(--radius);
+    overflow: hidden;
+    /* Para que las esquinas del borde se vean bien */
+}
+
+/* Estilos para cada item del acordeón */
+.accordion-item {
+    border-bottom: 1px solid #eee;
+}
+
+.accordion-item:last-child {
+    border-bottom: none;
+    /* Eliminar borde inferior del último elemento */
+}
+
+.accordion-title {
+    width: 100%;
+    background-color: var(--color-white);
+    padding: 18px 20px;
+    border: none;
+    text-align: left;
+    font-size: 1.1rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.2s;
+    color: var(--color-text);
+}
+
+.accordion-title:hover {
+    background-color: var(--color-bg);
+}
+
+.accordion-icon {
+    font-size: 1rem;
+    transition: transform 0.3s ease;
+    margin-left: 15px;
+    color: var(--color-primary);
+}
+
+/* Rotar la flecha cuando está abierto */
+.accordion-title.open .accordion-icon {
+    transform: rotate(180deg);
+}
+
+/* Contenedor de contenido para la animación de altura */
+.accordion-content-wrapper {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-in-out;
+    background-color: #f7f7f7;
+}
+
+.accordion-content-wrapper.open {
+    /* Establecer una altura máxima que siempre será mayor que el contenido */
+    max-height: 500px;
+}
+
+/* Estilos del contenido real */
+.accordion-content {
+    padding: 20px;
+    line-height: 1.6;
+    color: var(--color-text-light);
+}

@@ -1,32 +1,46 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./LoginPage.css";
 
 function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-    const navigate = useNavigate(); // Hook para redirigir
+    const navigate = useNavigate(); 
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        setError(""); // Limpiar errores previos
+        setError(""); 
 
-        // Validacion simple
         if (!email || !password) {
             setError("Por favor, completa ambos campos.");
             return;
         }
 
-        // Aqui es donde llamarias a tu backend (API) para verificar al usuario
-        // Por ahora, solo simularemos un inicio de sesion exitoso
-        console.log("Iniciando sesión con:", { email, password });
+        try {
+            // Peticion al Backend
+            const response = await axios.post("http://localhost:3001/api/login", {
+                correo: email,       
+                contrasenia: password
+            });
 
-        // Simulacion de exito
-        alert("¡Inicio de sesión exitoso! (Simulación)");
+            console.log("Login exitoso:", response.data);
 
-        // Redirigir al catalogo (pagina principal) despues del login
-        navigate("/");
+            localStorage.setItem("token", response.data.token);
+            localStorage.setItem("user", JSON.stringify(response.data));
+
+            alert(`¡Bienvenido de nuevo, ${response.data.nombre}!`);
+            navigate("/");
+
+        } catch (err) {
+            console.error("Error en login:", err);
+            // Manejo de errores del backend
+            const msg = err.response?.data?.message 
+                ? (Array.isArray(err.response.data.message) ? err.response.data.message.join(", ") : err.response.data.message)
+                : "Credenciales incorrectas o error en el servidor.";
+            setError(msg);
+        }
     };
 
     return (
@@ -34,7 +48,6 @@ function LoginPage() {
             <form className="login-form" onSubmit={handleSubmit}>
                 <h2>Iniciar Sesión</h2>
 
-                {/* Mostrar mensaje de error si existe */}
                 {error && <p className="error-message">{error}</p>}
 
                 <div className="form-group">
@@ -44,6 +57,7 @@ function LoginPage() {
                         id="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        placeholder="ejemplo@correo.com"
                         required
                     />
                 </div>
@@ -55,17 +69,18 @@ function LoginPage() {
                         id="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Ingresa tu contraseña"
                         required
                     />
                 </div>
 
                 <button type="submit" className="login-button">
-                    Iniciar Sesión
+                    Ingresar
                 </button>
 
                 <p className="signup-link">
                     ¿No tienes una cuenta?{" "}
-                    <Link to="/signup">Regístrate</Link>
+                    <Link to="/signup">Regístrate aquí</Link>
                 </p>
             </form>
         </div>

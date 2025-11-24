@@ -20,7 +20,7 @@ const createAccessToken = (payload) => {
 };
 
 export const register = async (req, res) => {
-  const { nombre, correo, contrasenia, departamento, municipio } = req.body;
+  const { nombre, correo, contrasenia, departamento, municipio, telefono } = req.body;
 
   try {
     // 1. Verificar si el usuario ya existe
@@ -36,7 +36,7 @@ export const register = async (req, res) => {
     // 4. Insertar usuario
     // En tu código original tenías "cliente" fijo, lo que ignoraba si alguien quería registrarse como propietario.
     const [result] = await pool.query(
-      "INSERT INTO Usuarios (nombre, correo, contrasenia, rol, departamento, municipio, tokenVerificacion, verificado, tokenExpiracion ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO Usuarios (nombre, correo, contrasenia, rol, departamento, municipio, telefono, tokenVerificacion, verificado, tokenExpiracion ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
         nombre, 
         correo, 
@@ -44,6 +44,7 @@ export const register = async (req, res) => {
         "cliente", 
         departamento, 
         municipio, 
+        telefono,
         verificationToken,
         false,
         tokenExpirationDate
@@ -123,6 +124,16 @@ export const logout = (req, res) => {
   return res.sendStatus(200);
 };
 
+//Ver usuarios registrados
+export const getAllUsers = async (req, res) => {
+  try {
+    const [users] = await pool.query("SELECT * FROM Usuarios");
+    
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 /* 
 a pieza que falta (El Receptor)
 

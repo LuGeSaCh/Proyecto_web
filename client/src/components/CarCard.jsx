@@ -1,14 +1,16 @@
 import React from "react";
 
+
 function CarCard({ car }) {
-    const { make, model, year, pricePerDay, imageURL} = car;
+    const { marca, modelo, anio, precioPorDia, imagenURL, descripcion} = car;
 
     return (
         <div className="car-card">
-            <img src={imageURL} alt={`${make} ${model}`} className="car-card-image" />
-            <h2>{`${make} ${model}`}</h2>
-            <p>Año: {year}</p>
-            <p>Precio por día: ${pricePerDay}</p>
+            <img src={imagenURL} alt={`${marca} ${modelo}`} className="car-card-image" />
+            <h2>{`${marca} ${modelo}`}</h2>
+            <p>Año: {anio}</p>
+            <p>Precio por día: ${precioPorDia}</p>
+            <p>Descripcion: {descripcion}</p> 
         </div>
     );
 }

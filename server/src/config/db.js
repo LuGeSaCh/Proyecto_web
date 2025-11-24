@@ -1,4 +1,5 @@
 import { createPool } from "mysql2/promise";
+import dotenv from "dotenv/config";
 
 // Crea la conexión usando un Pool (mejor rendimiento)
 export const pool = createPool({

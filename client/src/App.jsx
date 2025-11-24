@@ -7,6 +7,8 @@ import HelpPage from "./pages/HelpPage.jsx";  //Import Signup
 import LoginPage from "./pages/Login.jsx";//Import Login
 import SignupPage from "./pages/SignupPage.jsx";  //Import Signup
 import RentYourCarPage from "./pages/RentYourCarPage.jsx"; //Import RentYourCarPage
+import VerifyEmailPage from "./pages/VerifyEmailPage.jsx";
+//prueba
 
 function App() {
   return (
@@ -24,6 +26,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/rent-your-car" element={<RentYourCarPage />} />
+          <Route path="/verify-email" element={<VerifyEmailPage />} />
         </Routes>
       </div>
     </>
