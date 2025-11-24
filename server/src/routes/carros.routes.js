@@ -1,13 +1,17 @@
 // server/src/routes/carros.routes.js
 import { Router } from "express";
 import { authRequired } from "../middlewares/auth.middleware.js";
-import { getCars, createCar, toggleCarAvailability, getMyCars } from "../controllers/carros.controller.js";
+import { getCars, createCar, toggleCarAvailability, getMyCars, getCarsNearMe } from "../controllers/carros.controller.js";
 
 const router = Router();
 
 // --- PÚBLICO ---
 // Obtener catálogo general (filtra solo activos)
 router.get("/carros", getCars);
+
+
+// Obtener carros con filtros y cercanos al usuario logueado
+router.get("/carros/cerca", authRequired, getCarsNearMe);
 
 // --- PROPIETARIO (Requiere Auth) ---
 // Publicar un nuevo carro
