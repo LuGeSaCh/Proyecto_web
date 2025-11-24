@@ -67,7 +67,7 @@ export const createCar = async (req, res) => {
   }
 };
 
-// Nueva función para alternar la disponibilidad
+// Nueva función para alternar la disponibilidad -> solo el propietario puede hacerlo
 export const toggleCarAvailability = async (req, res) => {
   const { id } = req.params; // ID del vehículo
   const propietarioId = req.user.id; // ID del usuario autenticado
@@ -103,7 +103,7 @@ export const getMyCars = async (req, res) => {
   try {
     const propietarioId = req.user.id; // Viene del middleware authRequired
 
-    // NOTA: Aquí NO ponemos "WHERE activo = 1".
+
     // El dueño necesita ver TODO su inventario, esté visible al público o no.
     const [rows] = await pool.query(
       "SELECT * FROM Vehiculos WHERE propietarioId = ? ORDER BY fechaCreacion DESC",

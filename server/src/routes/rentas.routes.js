@@ -1,13 +1,14 @@
 import { Router } from "express";
 import { createRental } from "../controllers/rentas.controller.js";
-// Si estás usando el Mock global en app.js, no necesitas importar authRequired aquí.
-// Si NO usas el Mock global, descomenta e importa authRequired.
+import { authRequired } from "../middlewares/auth.middleware.js"; 
 
 const router = Router();
 
-// POST: Crear una reserva
-router.post("/rentals", createRental);
-/* GET: Obtener mis reservas
-router.get("/rentals", getMyRentals);
+// POST: Crear una reserva (Ahora protegido con authRequired)
+router.post("/rentals", authRequired, createRental);
+
+/* GET: Obtener mis reservas (ejemplo futuro)
+router.get("/rentals", authRequired, getMyRentals);
 */
+
 export default router;
