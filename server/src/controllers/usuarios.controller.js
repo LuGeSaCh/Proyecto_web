@@ -49,6 +49,8 @@ export const register = async (req, res) => {
         tokenExpirationDate
       ]
     );
+    
+    result
 
     // 5. Enviar correo
     const verificationLink = `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`;
