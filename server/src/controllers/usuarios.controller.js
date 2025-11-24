@@ -32,25 +32,25 @@ export const register = async (req, res) => {
 
     // 3. Generar token de verificación
     const verificationToken = crypto.randomBytes(20).toString('hex');
-    const tokenExpirationDate = new Date(Date.now() +  15 * 60 * 1000); // 15 minutos desde ahora
+    const tokenExpirationDate = new Date(Date.now() + 15 * 60 * 1000); // 15 minutos desde ahora
     // 4. Insertar usuario
     // En tu código original tenías "cliente" fijo, lo que ignoraba si alguien quería registrarse como propietario.
     const [result] = await pool.query(
       "INSERT INTO Usuarios (nombre, correo, contrasenia, rol, departamento, municipio, telefono, tokenVerificacion, verificado, tokenExpiracion ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
-        nombre, 
-        correo, 
-        passwordHash, 
-        "cliente", 
-        departamento, 
-        municipio, 
+        nombre,
+        correo,
+        passwordHash,
+        "cliente",
+        departamento,
+        municipio,
         telefono,
         verificationToken,
         false,
         tokenExpirationDate
       ]
     );
-    
+
     result
 
     // 5. Enviar correo
@@ -61,10 +61,14 @@ export const register = async (req, res) => {
       to: correo,
       subject: "Verifica tu cuenta en Rentados",
       html: `
-        <h1>¡Bienvenido ${nombre}!</h1>
-        <p>Por favor verifica tu cuenta haciendo click en el siguiente enlace:</p>
+        <h1>¡Bienvenido/a ${nombre}!</h1>
+        <p>Para activar tu cuenta y comenzar a usar todos nuestros servicios, 
+        por favor verifica tu correo haciendo clic en el siguiente enlace:</p>
         <a href="${verificationLink}">Verificar mi cuenta</a>
-        <p>Si no creaste esta cuenta, ignora este correo.</p>
+        <p>Si tú no creaste esta cuenta o recibiste este mensaje por error, 
+        simplemente puedes ignorar este correo y no se realizará ningún cambio.</p>
+        <p>Saludos cordiales,</p>
+        <strong>Equipo de Rentados.</strong>
       `,
     });
 
@@ -82,7 +86,7 @@ export const login = async (req, res) => {
 
   try {
     const [users] = await pool.query("SELECT * FROM Usuarios WHERE correo = ?", [correo]);
-    
+
     if (users.length === 0) {
       return res.status(400).json({ message: ["Usuario no encontrado"] });
     }
@@ -91,7 +95,7 @@ export const login = async (req, res) => {
 
     // Si no ponemos esto, el usuario podría loguearse sin haber verificado su email.
     if (!user.verificado) {
-       return res.status(401).json({ message: ["Por favor verifica tu correo antes de iniciar sesión"] });
+      return res.status(401).json({ message: ["Por favor verifica tu correo antes de iniciar sesión"] });
     }
 
     // Comparar contraseñas
@@ -128,7 +132,7 @@ export const logout = (req, res) => {
 export const getAllUsers = async (req, res) => {
   try {
     const [users] = await pool.query("SELECT * FROM Usuarios");
-    
+
     res.json(users);
   } catch (error) {
     res.status(500).json({ message: error.message });
