@@ -67,6 +67,55 @@ export const createCar = async (req, res) => {
   }
 };
 
+// Nueva función para alternar la disponibilidad
+export const toggleCarAvailability = async (req, res) => {
+  const { id } = req.params; // ID del vehículo
+  const propietarioId = req.user.id; // ID del usuario autenticado
+
+  try {
+    // 1. Validar que el carro pertenezca al usuario
+    const [cars] = await pool.query(
+      "SELECT activo FROM Vehiculos WHERE id = ? AND propietarioId = ?",
+      [id, propietarioId]
+    );
+
+    if (cars.length === 0) {
+      return res.status(404).json({ message: "Vehículo no encontrado o no autorizado" });
+    }
+
+    // 2. Invertir el estado actual (Si está 0 pasa a 1, si está 1 pasa a 0)
+    const nuevoEstado = !cars[0].activo;
+
+    await pool.query("UPDATE Vehiculos SET activo = ? WHERE id = ?", [nuevoEstado, id]);
+
+    res.json({ 
+      message: `Vehículo ${nuevoEstado ? 'habilitado' : 'deshabilitado'} correctamente`,
+      activo: nuevoEstado
+    });
+
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+// Obtener solo los carros del usuario logueado (Panel de Control)
+export const getMyCars = async (req, res) => {
+  try {
+    const propietarioId = req.user.id; // Viene del middleware authRequired
+
+    // NOTA: Aquí NO ponemos "WHERE activo = 1".
+    // El dueño necesita ver TODO su inventario, esté visible al público o no.
+    const [rows] = await pool.query(
+      "SELECT * FROM Vehiculos WHERE propietarioId = ? ORDER BY fechaCreacion DESC",
+      [propietarioId]
+    );
+
+    res.json(rows);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 // aun en desarrollo
 
 /* export const getCarsByLocation = async (req, res) => {
