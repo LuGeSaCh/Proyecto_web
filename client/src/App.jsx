@@ -8,6 +8,7 @@ import LoginPage from "./pages/Login.jsx";//Import Login
 import SignupPage from "./pages/SignupPage.jsx";  //Import Signup
 import RentYourCarPage from "./pages/RentYourCarPage.jsx"; //Import RentYourCarPage
 import VerifyEmailPage from "./pages/VerifyEmailPage.jsx";
+import ProfilePage from "./pages/ProfilePage.jsx";
 //prueba
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/rent-your-car" element={<RentYourCarPage />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       </div>
     </>
