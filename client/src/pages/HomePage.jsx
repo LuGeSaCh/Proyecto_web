@@ -1,24 +1,38 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import CarCard from "../components/CarCard.jsx";
 import "./HomePage.css";
 
 function HomePage() {
+  const navigate = useNavigate();
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Filtros existentes
+  // Filtros
   const [searchTerm, setSearchTerm] = useState("");
   const [yearFilter, setYearFilter] = useState("");
   const [priceOrder, setPriceOrder] = useState("");
   const [pickupDate, setPickupDate] = useState("");
   const [returnDate, setReturnDate] = useState("");
 
-  // 1. Estado para el carro seleccionado
+  // Estado para el proceso de reserva
   const [selectedCar, setSelectedCar] = useState(null);
+  const [processing, setProcessing] = useState(false);
+
+  // Estados para el formulario de pago
+  const [paymentMethod, setPaymentMethod] = useState("Tarjeta de Crédito");
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardExpiry, setCardExpiry] = useState("");
+  const [cardCvv, setCardCvv] = useState("");
 
   useEffect(() => {
+    loadCars();
+  }, []);
+
+  const loadCars = () => {
+    setLoading(true);
     axios
       .get("http://localhost:3001/api/carros")
       .then((res) => {
@@ -31,22 +45,95 @@ function HomePage() {
         setError("Error al cargar los carros.");
         setLoading(false);
       });
-  }, []);
+  };
 
-  // Funcion para calcular precio
+  // Cálculo de días y precio
   const calculateDays = () => {
-    if (!pickupDate || !returnDate) return 1; // Si no hay fechas, cobramos min 1 dia
+    if (!pickupDate || !returnDate) return 1;
     const start = new Date(pickupDate);
     const end = new Date(returnDate);
-
     const diffTime = end - start;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
     return diffDays > 0 ? diffDays : 1;
   };
 
   const days = calculateDays();
+  const totalPrice = selectedCar ? (selectedCar.precioPorDia * days).toFixed(2) : 0;
 
+  // --- LÓGICA PRINCIPAL DE RESERVA Y PAGO ---
+  const handleReservationAndPayment = async () => {
+    const token = localStorage.getItem("token");
+
+    // 1. Validaciones previas
+    if (!token) {
+      alert("Debes iniciar sesión para reservar.");
+      navigate("/login");
+      return;
+    }
+    if (!pickupDate || !returnDate) {
+      alert("Por favor selecciona las fechas de recogida y devolución.");
+      return;
+    }
+    if (!cardNumber || !cardExpiry || !cardCvv) {
+      alert("Por favor completa los datos de la tarjeta.");
+      return;
+    }
+
+    try {
+      setProcessing(true); // Activar spinner o texto de carga
+
+      // --- PASO 1: CREAR LA RESERVA (Bloquea el carro) ---
+      const rentalData = {
+        vehiculoId: selectedCar.id,
+        fechaInicio: pickupDate,
+        fechaFin: returnDate,
+        total: totalPrice
+      };
+
+      const rentalResponse = await axios.post(
+        "http://localhost:3001/api/rentals", 
+        rentalData,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      const { alquilerId } = rentalResponse.data;
+      console.log("Reserva creada, ID:", alquilerId);
+
+      // --- PASO 2: PROCESAR EL PAGO (Confirma la reserva) ---
+      const paymentData = {
+        alquilerId: alquilerId,
+        monto: totalPrice,
+        metodoPago: paymentMethod,
+        datosTarjeta: {
+          numero: cardNumber, // El backend validará esto (no debe terminar en 0000)
+          expiracion: cardExpiry,
+          cvv: cardCvv
+        }
+      };
+
+      await axios.post(
+        "http://localhost:3001/api/pagos", 
+        paymentData,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      // --- ÉXITO ---
+      alert("¡Pago aprobado y reserva confirmada! Disfruta tu viaje.");
+      setSelectedCar(null); // Cerrar resumen
+      setCardNumber(""); // Limpiar formulario
+      loadCars(); // Recargar carros (el que alquilaste ya no debería salir o salir inactivo)
+
+    } catch (err) {
+      console.error(err);
+      // Si falla el backend nos manda un mensaje (ej: "Fondos insuficientes")
+      const msg = err.response?.data?.message || "Ocurrió un error al procesar la reserva.";
+      alert("Error: " + msg);
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  // Filtros de búsqueda
   const processedCars = cars
     .filter((car) => {
       const term = searchTerm.toLowerCase();
@@ -70,75 +157,123 @@ function HomePage() {
   return (
     <div className="home-page-container">
 
-      {/*Parte de descripcion (Visible solo al seleccionar un carro) */}
+      {/* --- SECCIÓN DE RESUMEN Y PAGO (Visible al seleccionar carro) --- */}
       {selectedCar && (
         <div className="booking-summary" style={{
-          backgroundColor: '#e3f2fd',
-          padding: '20px',
-          borderRadius: '12px',
-          border: '1px solid #90caf9',
-          marginBottom: '20px',
-          animation: 'fadeIn 0.5s'
+          backgroundColor: '#fff',
+          padding: '25px',
+          borderRadius: '16px',
+          boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+          border: '1px solid #e0e0e0',
+          marginBottom: '30px',
+          animation: 'fadeIn 0.4s ease'
         }}>
-          <div style={{ display: 'flex', gap: '20px' }}>
-
-            {/*Imagen del carro*/}
-            <div style={{ flex: '0 0 150px' }}>
-              <img
-                src={selectedCar.imagenURL}
-                alt={`${selectedCar.marca} ${selectedCar.modelo}`}
-                style={{
-                  width: '100%',
-                  height: '100px',
-                  objectFit: 'cover',
-                  borderRadius: '8px',
-                  border: '1px solid #ccc',
-                  backgroundColor: '#fff'
-                }}
-              />
-            </div>
-
-            {/*Info del carro*/}
-            <div style={{ flex: 1 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
-                <div>
-                  <h2 style={{ marginTop: 0, color: '#0d47a1', fontSize: '1.5rem' }}>Resumen de tu elección</h2>
-                  <h3 style={{ margin: '5px 0' }}>{selectedCar.marca} {selectedCar.modelo} ({selectedCar.anio})</h3>
-                  <p style={{ margin: '5px 0', fontSize: '0.9rem', color: '#555' }}>{selectedCar.descripcion}</p>
-                </div>
-
-                {/* Btn para cerrar el resumen */}
-                <button
-                  onClick={() => setSelectedCar(null)}
-                  style={{ background: 'transparent', border: 'none', color: '#666', cursor: 'pointer', fontSize: '1.2rem' }}
-                  title="Cerrar resumen"
-                >
-                  ✕
-                </button>
-              </div>
-            </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+            <h2 style={{ margin: 0, color: '#333' }}>Finalizar Reserva</h2>
+            <button 
+              onClick={() => setSelectedCar(null)}
+              style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: '#999' }}
+            >✕</button>
           </div>
 
-          <hr style={{ borderColor: '#bbdefb', margin: '15px 0' }} />
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '30px' }}>
+            
+            {/* Columna Izquierda: Detalles del Carro */}
+            <div style={{ flex: '1 1 300px' }}>
+              <div style={{ display: 'flex', gap: '15px', marginBottom: '15px' }}>
+                <img
+                  src={selectedCar.imagenURL}
+                  alt={selectedCar.modelo}
+                  style={{ width: '100px', height: '70px', objectFit: 'cover', borderRadius: '8px' }}
+                />
+                <div>
+                  <h3 style={{ margin: '0 0 5px 0' }}>{selectedCar.marca} {selectedCar.modelo}</h3>
+                  <p style={{ margin: 0, color: '#666' }}>{selectedCar.anio} - {selectedCar.departamento}</p>
+                </div>
+              </div>
+              
+              <div style={{ background: '#f8f9fa', padding: '15px', borderRadius: '8px' }}>
+                <p style={{ margin: '5px 0' }}>📅 <strong>Fechas:</strong> {pickupDate || '...'} al {returnDate || '...'}</p>
+                <p style={{ margin: '5px 0' }}>⏳ <strong>Duración:</strong> {days} días</p>
+                <p style={{ margin: '5px 0', fontSize: '1.2rem', color: '#007bff' }}>
+                  💵 <strong>Total a pagar: ${totalPrice}</strong>
+                </p>
+              </div>
+            </div>
 
-          {/*Calculo del precio total */}
-          <div className="price-calculation">
-            <p>
-              Precio por día: <strong>${selectedCar.precioPorDia}</strong> <br />
-              Días seleccionados: <strong>{days}</strong> ({pickupDate || 'Hoy'} a {returnDate || 'Mañana'})
-            </p>
-            <h2 style={{ color: '#2e7d32' }}>
-              Total a Pagar: ${(selectedCar.precioPorDia * days).toFixed(2)}
-            </h2>
+            {/* Columna Derecha: Formulario de Pago */}
+            <div style={{ flex: '1 1 300px', borderLeft: '1px solid #eee', paddingLeft: '30px' }}>
+              <h3 style={{ marginTop: 0 }}>Método de Pago</h3>
+              
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Tipo de Tarjeta</label>
+                <select 
+                  value={paymentMethod} 
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                  style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }}
+                >
+                  <option>Tarjeta de Crédito</option>
+                  <option>Tarjeta de Débito</option>
+                </select>
+              </div>
 
-            <button className="car-card-button" style={{ width: '100%', marginTop: '10px', fontSize: '1.2rem' }}>
-              Confirmar Reserva
-            </button>
+              <div style={{ marginBottom: '15px' }}>
+                <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Número de Tarjeta</label>
+                <input 
+                  type="text" 
+                  placeholder="0000 0000 0000 0000" 
+                  value={cardNumber}
+                  onChange={(e) => setCardNumber(e.target.value)}
+                  maxLength="19"
+                  style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }}
+                />
+                <small style={{color: '#888', fontSize: '0.8rem'}}>* Simulación: No uses tarjetas reales.</small>
+              </div>
+
+              <div style={{ display: 'flex', gap: '15px' }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Expiración</label>
+                  <input 
+                    type="text" 
+                    placeholder="MM/YY" 
+                    value={cardExpiry}
+                    onChange={(e) => setCardExpiry(e.target.value)}
+                    maxLength="5"
+                    style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }}
+                  />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>CVV</label>
+                  <input 
+                    type="password" 
+                    placeholder="123" 
+                    value={cardCvv}
+                    onChange={(e) => setCardCvv(e.target.value)}
+                    maxLength="3"
+                    style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }}
+                  />
+                </div>
+              </div>
+
+              <button 
+                onClick={handleReservationAndPayment}
+                disabled={processing}
+                className="car-card-button" 
+                style={{ 
+                  width: '100%', 
+                  marginTop: '20px', 
+                  backgroundColor: processing ? '#ccc' : '#28a745',
+                  cursor: processing ? 'not-allowed' : 'pointer'
+                }}
+              >
+                {processing ? "Procesando pago..." : `Pagar $${totalPrice}`}
+              </button>
+            </div>
           </div>
         </div>
       )}
 
-      {/*Filtros*/}
+      {/* Filtros y Catálogo (Sin cambios mayores) */}
       <div className="filters-container">
         <h2 className="catalog-title"> Selecciona tu alquiler</h2>
         <div className="filter-group search-group">
@@ -167,7 +302,6 @@ function HomePage() {
             value={pickupDate}
             onChange={(e) => setPickupDate(e.target.value)}
             className="filter-input"
-            aria-label="Fecha de recogida"
           /> a
           <span className="date-separator"></span>
           <input
@@ -175,7 +309,6 @@ function HomePage() {
             value={returnDate}
             onChange={(e) => setReturnDate(e.target.value)}
             className="filter-input"
-            aria-label="Fecha de devolución"
           />
         </div>
 
@@ -193,13 +326,10 @@ function HomePage() {
       </div>
 
       {processedCars.length === 0 ? (
-        <p className="no-results">
-          No se encontraron vehículos con esos criterios.
-        </p>
+        <p className="no-results">No se encontraron vehículos con esos criterios.</p>
       ) : (
         <div className="catalog-grid">
           {processedCars.map((car) => (
-            // Importante: Pasamos la fun setSelectedCar
             <CarCard key={car.id} car={car} onSelect={setSelectedCar} />
           ))}
         </div>
