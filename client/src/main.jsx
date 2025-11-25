@@ -1,15 +1,15 @@
 import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import { BrowserRouter } from "react-router-dom"; // Importa BrowserRouter
+import { createRoot } from "react-dom/client"; //Conecta  a react con el navegador
+import { BrowserRouter } from "react-router-dom"; // habilita la navegacion sin tener que recargar la pagina
 import App from "./App.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
-//Sirve para renderizar la aplicacion en el html, es decir que practicamente lo que hace es llamar al div con id root en el html y renderiza la aplicacion de react ahi
 
+// Envuelve App que es el componente principal con BrowserRouter
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AuthProvider>
       <BrowserRouter>
-        <App />
+        <App /> 
       </BrowserRouter>
     </AuthProvider>
   </StrictMode>

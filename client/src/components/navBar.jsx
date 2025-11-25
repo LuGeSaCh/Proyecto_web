@@ -1,5 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router-dom"; //maneja la navegación internamente, cambiando la URL 
+//y renderizando el componente correspondiente sin recargar el navegador
 import { useAuth } from "../context/AuthContext"; // Importar el contexto
 import "./navBar.css";
 

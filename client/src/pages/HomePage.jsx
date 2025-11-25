@@ -33,6 +33,7 @@ function HomePage() {
   const [cardExpiry, setCardExpiry] = useState("");
   const [cardCvv, setCardCvv] = useState("");
 
+// Si el usuario está autenticado, cargar carros cercanos, y lista de carros en general
   useEffect(() => {
     loadCars();
     if (isAuthenticated) {
@@ -40,13 +41,16 @@ function HomePage() {
     }
   }, [isAuthenticated]); 
 
+  // Función para cargar la lista de carros 
   const loadCars = () => {
     setLoading(true);
     axios
-      .get("http://localhost:3001/api/carros")
+      .get("http://localhost:3001/api/carros") //Haciendo petición a la API
       .then((res) => {
-        const payload = res.data?.cars ?? res.data;
+        const payload = res.data?.cars ?? res.data; //Estamos diciendo que guardar,
+        // porque a veces el backend manda la lista de carros asi: { cars: [...] } y a veces solo [...]
         setCars(Array.isArray(payload) ? payload : payload ? [payload] : []);
+        //garantiza que setCars siempre reciba un array
         setLoading(false);
       })
       .catch((err) => {
@@ -71,14 +75,14 @@ function HomePage() {
     }
   };
 
-
+//Funcion para calcular los dias que el usuario quiere rentar el carro
   const calculateDays = () => {
     if (!pickupDate || !returnDate) return 1;
-    const start = new Date(pickupDate);
+    const start = new Date(pickupDate); //convertir cadena de texto a objeto fecha
     const end = new Date(returnDate);
-    const diffTime = end - start;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays > 0 ? diffDays : 1;
+    const diffTime = end - start; 
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); //ceil para redondear siempre hacia arriba
+    return diffDays > 0 ? diffDays : 1; 
   };
 
   const days = calculateDays();
@@ -176,70 +180,79 @@ function HomePage() {
     <div className="home-page-container">
 
       {selectedCar && (
-        <div className="booking-summary" style={{
-          backgroundColor: '#fff',
-          padding: '25px',
-          borderRadius: '16px',
-          boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
-          border: '1px solid #e0e0e0',
-          marginBottom: '30px',
-          animation: 'fadeIn 0.4s ease'
-        }}>
-           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-            <h2 style={{ margin: 0, color: '#333' }}>Finalizar Reserva</h2>
-            <button
-              onClick={() => setSelectedCar(null)}
-              style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: '#999' }}
-            >✕</button>
+        <div className="booking-summary">
+          <div className="booking-header">
+            <h2 className="booking-title">Finalizar Reserva</h2>
+            <button onClick={() => setSelectedCar(null)} className="close-button">✕</button>
           </div>
 
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '30px' }}>
-            <div style={{ flex: '1 1 300px' }}>
-              <div style={{ display: 'flex', gap: '15px', marginBottom: '15px' }}>
+          <div className="booking-content">
+            <div className="car-details-column">
+              <div className="car-preview">
                 <img
                   src={selectedCar.imagenURL}
                   alt={selectedCar.modelo}
-                  style={{ width: '100px', height: '70px', objectFit: 'cover', borderRadius: '8px' }}
+                  className="car-preview-img"
                 />
-                <div>
-                  <h3 style={{ margin: '0 0 5px 0' }}>{selectedCar.marca} {selectedCar.modelo}</h3>
-                  <p style={{ margin: 0, color: '#666' }}>{selectedCar.anio} - {selectedCar.departamento}</p>
+                <div className="car-preview-info">
+                  <h3>{selectedCar.marca} {selectedCar.modelo}</h3>
+                  <p>{selectedCar.anio} - {selectedCar.departamento}</p>
                 </div>
               </div>
 
-              <div style={{ background: '#f8f9fa', padding: '15px', borderRadius: '8px' }}>
-                <p style={{ margin: '5px 0' }}>📅 <strong>Fechas:</strong> {pickupDate || '...'} al {returnDate || '...'}</p>
-                <p style={{ margin: '5px 0' }}>⏳ <strong>Duración:</strong> {days} días</p>
-                <p style={{ margin: '5px 0', fontSize: '1.2rem', color: '#007bff' }}>
+              <div className="pricing-box">
+                <p>📅 <strong>Fechas:</strong> {pickupDate || '...'} al {returnDate || '...'}</p>
+                <p>⏳ <strong>Duración:</strong> {days} días</p>
+                <p className="total-price">
                   💵 <strong>Total a pagar: ${totalPrice}</strong>
                 </p>
               </div>
             </div>
-
-            <div style={{ flex: '1 1 300px', borderLeft: '1px solid #eee', paddingLeft: '30px' }}>
-              <h3 style={{ marginTop: 0 }}>Método de Pago</h3>
-              <div style={{ marginBottom: '15px' }}>
-                <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Número de Tarjeta</label>
+            <div className="payment-column">
+              <h3 className="payment-title">Método de Pago</h3>
+              
+              <div className="input-wrapper">
+                <label className="input-label">Número de Tarjeta</label>
                 <input
                   type="text"
                   placeholder="0000 0000 0000 0000"
                   value={cardNumber}
                   onChange={(e) => setCardNumber(e.target.value)}
                   maxLength="19"
-                  style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }}
+                  className="payment-input"
                 />
               </div>
-              <div style={{ display: 'flex', gap: '15px' }}>
-                <div style={{ flex: 1 }}>
-                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Expiración</label>
-                  <input type="text" placeholder="MM/YY" value={cardExpiry} onChange={(e) => setCardExpiry(e.target.value)} maxLength="5" style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
+
+              <div className="row-inputs">
+                <div className="flex-1">
+                  <label className="input-label">Expiración</label>
+                  <input 
+                    type="text" 
+                    placeholder="MM/YY" 
+                    value={cardExpiry} 
+                    onChange={(e) => setCardExpiry(e.target.value)} 
+                    maxLength="5" 
+                    className="payment-input" 
+                  />
                 </div>
-                <div style={{ flex: 1 }}>
-                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>CVV</label>
-                  <input type="password" placeholder="123" value={cardCvv} onChange={(e) => setCardCvv(e.target.value)} maxLength="3" style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
+                <div className="flex-1">
+                  <label className="input-label">CVV</label>
+                  <input 
+                    type="password" 
+                    placeholder="123" 
+                    value={cardCvv} 
+                    onChange={(e) => setCardCvv(e.target.value)} 
+                    maxLength="3" 
+                    className="payment-input" 
+                  />
                 </div>
               </div>
-              <button onClick={handleReservationAndPayment} disabled={processing} className="car-card-button" style={{ width: '100%', marginTop: '20px', backgroundColor: processing ? '#ccc' : '#28a745', cursor: processing ? 'not-allowed' : 'pointer' }}>
+
+              <button 
+                onClick={handleReservationAndPayment} 
+                disabled={processing} 
+                className="car-card-button pay-button"
+              >
                 {processing ? "Procesando pago..." : `Pagar $${totalPrice}`}
               </button>
             </div>

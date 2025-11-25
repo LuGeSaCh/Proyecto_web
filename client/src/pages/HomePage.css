@@ -80,8 +80,7 @@
 }
 
 .nearby-section {
-  background-color: #f0f8ff; /* Un azul muy claro para destacar */
-  padding: 20px;
+  background-color: #f0f8ff; 
   border-radius: 12px;
   margin-bottom: 40px;
   border: 1px solid #cce5ff;
@@ -110,4 +109,148 @@
   height: 1px;
   background: #ddd;
   margin: 30px 0;
+}
+
+.booking-summary {
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+  margin-bottom: 30px;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.booking-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.booking-title {
+  margin: 0;
+  color: #333;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #999;
+  transition: color 0.2s;
+}
+
+.close-button:hover {
+  color: #333;
+}
+
+.booking-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.car-details-column {
+  flex: 1 1 300px;
+}
+
+.car-preview {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.car-preview-img {
+  width: 100px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.car-preview-info h3 {
+  margin: 0 0 5px 0;
+}
+
+.car-preview-info p {
+  margin: 0;
+  color: #666;
+}
+
+.pricing-box {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.pricing-box p {
+  margin: 5px 0;
+}
+
+.total-price {
+  font-size: 1.2rem;
+  color: #007bff;
+  font-weight: bold;
+}
+
+.payment-column {
+  flex: 1 1 300px;
+  border-left: 1px solid #eee;
+  padding-left: 30px;
+}
+
+@media (max-width: 768px) {
+  .payment-column {
+    border-left: none;
+    padding-left: 0;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+  }
+}
+
+.payment-title {
+  margin-top: 0;
+}
+
+.input-wrapper {
+  margin-bottom: 15px;
+}
+
+.input-label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.payment-input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box; 
+}
+
+.row-inputs {
+  display: flex;
+  gap: 15px;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.pay-button {
+  width: 100%;
+  margin-top: 20px;
+
+}
+
+.pay-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }

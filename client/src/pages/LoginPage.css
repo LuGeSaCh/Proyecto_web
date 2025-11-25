@@ -77,7 +77,6 @@
     text-decoration: underline;
 }
 
-/* Estilo para mensajes de error (similar al de app.css) */
 .login-form .error-message {
     color: #d93025;
     background-color: #fbe9e7;

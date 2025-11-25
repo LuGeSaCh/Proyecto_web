@@ -28,7 +28,7 @@ function LoginPage() {
 
             login(response.data, response.data.token);
 
-            alert(`¡Bienvenido de nuevo, ${response.data.nombre}!`);
+            alert(`¡Bienvenido, ${response.data.nombre}!`);
             navigate("/");
 
         } catch (err) {
