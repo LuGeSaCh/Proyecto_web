@@ -18,7 +18,6 @@ const procesarPagoConBanco = async (datosTarjeta, monto) => {
   });
 };
 
-// --- 2. CONTROLADOR PRINCIPAL ---
 export const createPayment = async (req, res) => {
   // Recibimos 'datosTarjeta' del front para pasárselo al mock
   const { alquilerId, monto, metodoPago, datosTarjeta } = req.body;
