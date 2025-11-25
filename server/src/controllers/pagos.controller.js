@@ -1,14 +1,31 @@
 import { pool } from "../config/db.js";
 
-// 1. REGISTRAR UN PAGO
+// Esta función actúa como si fuera el banco. No toca la base de datos.
+const procesarPagoConBanco = async (datosTarjeta, monto) => {
+  return new Promise((resolve, reject) => {
+    console.log(`Procesando cobro de $${monto} con el banco simulado...`);
+    
+    // Simulamos un retraso de red de 2 segundos (para que se sienta real)
+    setTimeout(() => {
+      // Si el número de tarjeta no viene o termina en "0000", rechazamos el pago.
+      if (!datosTarjeta || !datosTarjeta.numero || datosTarjeta.numero.endsWith("0000")) {
+        reject(new Error("Fondos insuficientes o tarjeta rechazada por el banco."));
+      } else {
+        // Si todo está bien, aprobamos.
+        resolve({ transaccionId: "TXN-" + Date.now(), estado: "aprobado" });
+      }
+    }, 2000);
+  });
+};
+
+// --- 2. CONTROLADOR PRINCIPAL ---
 export const createPayment = async (req, res) => {
-  const { alquilerId, monto, metodoPago } = req.body;
-  const userId = req.user.id; // ¡Obtenido del Mock!
+  // Recibimos 'datosTarjeta' del front para pasárselo al mock
+  const { alquilerId, monto, metodoPago, datosTarjeta } = req.body;
+  const userId = req.user.id; 
 
   try {
-    // VALIDACIÓN DE SEGURIDAD:
-    // Verificar que el alquiler existe y que el usuario es el CLIENTE de ese alquiler.
-    // (No queremos que pagues el alquiler de otro por error)
+    // Verificar que el alquiler existe y pertenece al usuario que intenta pagar
     const [alquiler] = await pool.query(
         "SELECT * FROM Alquileres WHERE id = ? AND clienteId = ?", 
         [alquilerId, userId]
@@ -17,14 +34,16 @@ export const createPayment = async (req, res) => {
     if (alquiler.length === 0) {
         return res.status(403).json({ message: "No tienes permiso para pagar este alquiler o no existe." });
     }
+    // Si esto falla (reject), saltará directo al bloque 'catch' y no se guardará nada.
+    await procesarPagoConBanco(datosTarjeta, monto);
 
-    // Insertar el pago
+    // registramos el pago en nuestra base de datos
     const [result] = await pool.query(
       "INSERT INTO Pagos (alquilerId, monto, metodoPago) VALUES (?, ?, ?)",
       [alquilerId, monto, metodoPago]
     );
 
-    // Actualizar estado del alquiler a 'confirmado'
+    // Confirmamos la reserva porque ya tenemos el dinero
     await pool.query("UPDATE Alquileres SET estado = 'confirmado' WHERE id = ?", [alquilerId]);
 
     res.json({
@@ -34,17 +53,15 @@ export const createPayment = async (req, res) => {
     });
 
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("Error en proceso de pago:", error.message);
+    // Devolvemos el error al front para que muestre la alerta roja
+    res.status(400).json({ message: error.message });
   }
 };
 
-
-// 2. Obtener todos los id de pagos de un usuario
-// para poder listar sus facturas
-
-// 3. OBTENER FACTURA 
+// --- 3. OBTENER FACTURA (Tu función existente) ---
 export const getInvoice = async (req, res) => {
-  const { id } = req.params; // ID del Pago (Factura)
+  const { id } = req.params;
   const userId = req.user.id; 
 
   try {
