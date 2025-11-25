@@ -41,32 +41,13 @@ function ProfilePage() {
         </div>
       </div>
 
-      {/* Seccion de Estadisticas  */}
-      <div className="dashboard-grid">
-        <div className="stat-card">
-          <div className="stat-info">
-            <h3>Rentas Totales</h3>
-            <p className="stat-number">0</p>
-          </div>
-          <div className="stat-icon">🚗</div>
-        </div>
+     
+      
 
-        <div className="stat-card">
-          <div className="stat-info">
-            <h3>En Curso</h3>
-            <p className="stat-number">0</p>
-          </div>
-          <div className="stat-icon">🔑</div>
-        </div>
+        
 
-        <div className="stat-card">
-          <div className="stat-info">
-            <h3>Soporte</h3>
-            <p className="stat-number">Ayuda</p>
-          </div>
-          <div className="stat-icon">❓</div>
-        </div>
-      </div>
+        
+    
 
       {/* Btn de Accion Principal*/}
       <div className="action-area">
