@@ -1,6 +1,6 @@
 import React from 'react';
 import './RentYourCarPage.css'; // Crearemos este archivo de estilos
-import rentyourcarimage from '../images/rent-your-car.png'; // Asegúrate de tener una imagen en esta ruta
+import rentyourcarimage from '../images/rent-your-car.png'; 
 
 function RentYourCarPage() {
     return (

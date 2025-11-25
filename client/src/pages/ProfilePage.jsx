@@ -12,11 +12,16 @@ function ProfilePage() {
     navigate("/");
   };
 
+  // Redireccion al historial de rentas
+  const handleViewRentals = () => {
+    navigate("/my-rentals");
+  };
+
   if (!user) return <div className="loading-text">Cargando perfil...</div>;
 
   return (
     <div className="profile-wrapper">
-      {/* Sección Superior: Información del Usuario */}
+      {/*Informacion del usuario */}
       <div className="profile-header-card">
         <div className="profile-text-content">
           <h1 className="user-name">{user.nombre}</h1>
@@ -28,7 +33,7 @@ function ProfilePage() {
             <span className="user-role-badge">{user.rol}</span>
           </div>
         </div>
-        
+
         <div className="profile-header-actions">
           <button onClick={handleLogout} className="logout-btn">
             Cerrar Sesión
@@ -36,12 +41,12 @@ function ProfilePage() {
         </div>
       </div>
 
-      {/* Sección de Estadísticas (Dashboard) */}
+      {/* Seccion de Estadisticas  */}
       <div className="dashboard-grid">
         <div className="stat-card">
           <div className="stat-info">
             <h3>Rentas Totales</h3>
-            <p className="stat-number">0</p> {/* Aquí podrías conectar el historial real */}
+            <p className="stat-number">0</p>
           </div>
           <div className="stat-icon">🚗</div>
         </div>
@@ -63,9 +68,9 @@ function ProfilePage() {
         </div>
       </div>
 
-      {/* Botón de Acción Principal */}
+      {/* Btn de Accion Principal*/}
       <div className="action-area">
-        <button className="view-rentals-btn" onClick={() => console.log("Ir a mis rentas")}>
+        <button className="view-rentals-btn" onClick={handleViewRentals}>
           Ver mis rentas
         </button>
       </div>

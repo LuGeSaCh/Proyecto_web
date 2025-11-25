@@ -39,18 +39,14 @@ h1 {
   margin-bottom: 40px;
 }
 
-/* --- Cuadrícula del Catálogo --- */
+/* Cuadricula del catalogo */
 .catalog-grid {
   display: grid;
-  /* Crea columnas automáticas:
-       - Mínimo 300px de ancho
-       - Máximo 1 fracción (se ajustan para llenar el espacio)
-    */
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 24px;
 }
 
-/* --- Tarjeta de Carro (CarCard) --- */
+/*CarCard*/
 .car-card {
   background: var(--color-white);
   border-radius: var(--radius);
@@ -67,11 +63,11 @@ h1 {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
 
+/* Asegura que la imagen cubra el espacio */
 .car-card-image {
   width: 100%;
   height: 200px;
   object-fit: cover;
-  /* Asegura que la imagen cubra el espacio */
 }
 
 .car-card-body {
@@ -100,6 +96,7 @@ h1 {
   color: var(--color-text-light);
 }
 
+/* Empuja el btn al fondo de la tarjeta */
 .car-card-button {
   background-color: var(--color-primary);
   color: var(--color-white);
@@ -111,7 +108,6 @@ h1 {
   cursor: pointer;
   transition: background-color 0.2s ease;
   margin-top: auto;
-  /* Empuja el botón al fondo de la tarjeta */
 }
 
 .car-card-button:hover {

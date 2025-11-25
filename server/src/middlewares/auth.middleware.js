@@ -2,9 +2,9 @@ import jwt from "jsonwebtoken";
 
 export const authRequired = (req, res, next) => {
   try {
-    // 1. Obtener el token del header (Formato: "Bearer eyJhbGci...")
+    // 1. Obtener el token del header 
     const authHeader = req.headers.authorization;
-    
+
     if (!authHeader) {
       return res.status(401).json({ message: "No hay token, autorización denegada" });
     }
@@ -22,11 +22,11 @@ export const authRequired = (req, res, next) => {
         return res.status(403).json({ message: "Token inválido" });
       }
 
-      // 3. ¡ÉXITO! Guardamos los datos del usuario en la petición (req)
-      // Así los siguientes controladores sabrán quién es el usuario.
+      // 3. ¡ÉXITO! Guardamos los datos del usuario en la peticion
+      // Asi los siguientes controladores va a saber quien es el siguiente usuario
       req.user = userDecoded;
-      
-      next(); // Deja pasar a la siguiente función (el controlador)
+
+      next(); // Deja pasar al siguiente el controlador
     });
 
   } catch (error) {

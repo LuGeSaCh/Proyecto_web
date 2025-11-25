@@ -3,7 +3,8 @@
     justify-content: center;
     padding: 40px 20px;
     background-color: #f8f9fa;
-    min-height: 80vh; /* Asegura que ocupe buen espacio vertical */
+    min-height: 80vh;
+    /* Asegura que ocupe buen espacio vertical */
 }
 
 .create-car-form {
@@ -17,7 +18,7 @@
 
 .create-car-form h2 {
     text-align: center;
-    color: #007bff; /* Usando el color primario directo o var(--color-primary) */
+    color: #007bff;
     margin-top: 0;
     margin-bottom: 30px;
 }
@@ -66,7 +67,8 @@
 }
 
 .submit-btn {
-    background-color: #28a745; /* Verde para indicar éxito/creación */
+    background-color: #28a745;
+    /* Verde para indicar exito */
     color: white;
     font-weight: 600;
     padding: 14px;

@@ -10,6 +10,7 @@ import RentYourCarPage from "./pages/RentYourCarPage.jsx"; //Import RentYourCarP
 import VerifyEmailPage from "./pages/VerifyEmailPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import CreateCarPage from "./pages/CreateCarPage.jsx";
+import MyRentalsPage from "./pages/MyRentalsPage.jsx";
 //prueba
 
 function App() {
@@ -20,7 +21,7 @@ function App() {
         <h1>Rentados</h1>
         <p>Tu mejor decisión sobre ruedas!</p> {/*slogan*/}
 
-        {/* Aqui se renderizara el componente de la página actual */}
+        {/* Aqui se renderizara el componente de la pagina actual */}
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/nosotros" element={<AboutPage />} />
@@ -31,6 +32,7 @@ function App() {
           <Route path="/verify-email" element={<VerifyEmailPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/create-car" element={<CreateCarPage />} />
+          <Route path="/my-rentals" element={<MyRentalsPage />} />
         </Routes>
       </div>
     </>

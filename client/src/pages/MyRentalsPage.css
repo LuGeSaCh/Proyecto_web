@@ -1,0 +1,91 @@
+.my-rentals-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.my-rentals-container h2 {
+    color: #333;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+}
+
+.rental-item-card {
+    display: flex;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    margin-bottom: 20px;
+    overflow: hidden;
+    align-items: center;
+    padding: 15px;
+    gap: 20px;
+    transition: transform 0.2s;
+}
+
+.rental-item-card:hover {
+    transform: translateY(-3px);
+}
+
+.rental-img {
+    width: 120px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.rental-info {
+    flex: 1;
+}
+
+.rental-info h3 {
+    margin: 0 0 10px 0;
+    color: #007bff;
+}
+
+.rental-info p {
+    margin: 4px 0;
+    color: #555;
+    font-size: 0.95rem;
+}
+
+.rental-status {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.85rem;
+}
+
+/* Colores por estado */
+.status-pendiente {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-confirmado {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-curso {
+    background-color: #cce5ff;
+    color: #004085;
+}
+
+.status-finalizado {
+    background-color: #d6d8d9;
+    color: #383d41;
+}
+
+@media (max-width: 600px) {
+    .rental-item-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .rental-img {
+        width: 100%;
+        height: 150px;
+    }
+}

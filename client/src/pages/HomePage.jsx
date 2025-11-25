@@ -47,7 +47,7 @@ function HomePage() {
       });
   };
 
-  // Cálculo de días y precio
+  // Calculo de dias y precio
   const calculateDays = () => {
     if (!pickupDate || !returnDate) return 1;
     const start = new Date(pickupDate);
@@ -60,7 +60,7 @@ function HomePage() {
   const days = calculateDays();
   const totalPrice = selectedCar ? (selectedCar.precioPorDia * days).toFixed(2) : 0;
 
-  // --- LÓGICA PRINCIPAL DE RESERVA Y PAGO ---
+  //Logica de reserva y pago
   const handleReservationAndPayment = async () => {
     const token = localStorage.getItem("token");
 
@@ -80,9 +80,9 @@ function HomePage() {
     }
 
     try {
-      setProcessing(true); // Activar spinner o texto de carga
+      setProcessing(true); // Activa  texto de carga
 
-      // --- PASO 1: CREAR LA RESERVA (Bloquea el carro) ---
+      // 1-Crear la reserva(Bloquea el carro)
       const rentalData = {
         vehiculoId: selectedCar.id,
         fechaInicio: pickupDate,
@@ -91,7 +91,7 @@ function HomePage() {
       };
 
       const rentalResponse = await axios.post(
-        "http://localhost:3001/api/rentals", 
+        "http://localhost:3001/api/rentals",
         rentalData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -99,29 +99,29 @@ function HomePage() {
       const { alquilerId } = rentalResponse.data;
       console.log("Reserva creada, ID:", alquilerId);
 
-      // --- PASO 2: PROCESAR EL PAGO (Confirma la reserva) ---
+      //2- Procesar pago (Confirma la reserva)
       const paymentData = {
         alquilerId: alquilerId,
         monto: totalPrice,
         metodoPago: paymentMethod,
         datosTarjeta: {
-          numero: cardNumber, // El backend validará esto (no debe terminar en 0000)
+          numero: cardNumber, // El backend va a validar esto (no debe terminar en 0000)
           expiracion: cardExpiry,
           cvv: cardCvv
         }
       };
 
       await axios.post(
-        "http://localhost:3001/api/pagos", 
+        "http://localhost:3001/api/pagos",
         paymentData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // --- ÉXITO ---
+      // Exito
       alert("¡Pago aprobado y reserva confirmada! Disfruta tu viaje.");
-      setSelectedCar(null); // Cerrar resumen
-      setCardNumber(""); // Limpiar formulario
-      loadCars(); // Recargar carros (el que alquilaste ya no debería salir o salir inactivo)
+      setSelectedCar(null); // Cierra resumen
+      setCardNumber(""); // Limpia formulario
+      loadCars(); // Recarga carros (el que alquilaste ya no va salir o salir inactivo)
 
     } catch (err) {
       console.error(err);
@@ -133,7 +133,7 @@ function HomePage() {
     }
   };
 
-  // Filtros de búsqueda
+  // Filtros de busqueda
   const processedCars = cars
     .filter((car) => {
       const term = searchTerm.toLowerCase();
@@ -157,7 +157,7 @@ function HomePage() {
   return (
     <div className="home-page-container">
 
-      {/* --- SECCIÓN DE RESUMEN Y PAGO (Visible al seleccionar carro) --- */}
+      {/*Seccion de resumen y pago (Visible al seleccionar carro)*/}
       {selectedCar && (
         <div className="booking-summary" style={{
           backgroundColor: '#fff',
@@ -170,14 +170,14 @@ function HomePage() {
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
             <h2 style={{ margin: 0, color: '#333' }}>Finalizar Reserva</h2>
-            <button 
+            <button
               onClick={() => setSelectedCar(null)}
               style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: '#999' }}
             >✕</button>
           </div>
 
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '30px' }}>
-            
+
             {/* Columna Izquierda: Detalles del Carro */}
             <div style={{ flex: '1 1 300px' }}>
               <div style={{ display: 'flex', gap: '15px', marginBottom: '15px' }}>
@@ -191,7 +191,7 @@ function HomePage() {
                   <p style={{ margin: 0, color: '#666' }}>{selectedCar.anio} - {selectedCar.departamento}</p>
                 </div>
               </div>
-              
+
               <div style={{ background: '#f8f9fa', padding: '15px', borderRadius: '8px' }}>
                 <p style={{ margin: '5px 0' }}>📅 <strong>Fechas:</strong> {pickupDate || '...'} al {returnDate || '...'}</p>
                 <p style={{ margin: '5px 0' }}>⏳ <strong>Duración:</strong> {days} días</p>
@@ -204,11 +204,11 @@ function HomePage() {
             {/* Columna Derecha: Formulario de Pago */}
             <div style={{ flex: '1 1 300px', borderLeft: '1px solid #eee', paddingLeft: '30px' }}>
               <h3 style={{ marginTop: 0 }}>Método de Pago</h3>
-              
+
               <div style={{ marginBottom: '15px' }}>
                 <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Tipo de Tarjeta</label>
-                <select 
-                  value={paymentMethod} 
+                <select
+                  value={paymentMethod}
                   onChange={(e) => setPaymentMethod(e.target.value)}
                   style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }}
                 >
@@ -219,23 +219,23 @@ function HomePage() {
 
               <div style={{ marginBottom: '15px' }}>
                 <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Número de Tarjeta</label>
-                <input 
-                  type="text" 
-                  placeholder="0000 0000 0000 0000" 
+                <input
+                  type="text"
+                  placeholder="0000 0000 0000 0000"
                   value={cardNumber}
                   onChange={(e) => setCardNumber(e.target.value)}
                   maxLength="19"
                   style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }}
                 />
-                <small style={{color: '#888', fontSize: '0.8rem'}}>* Simulación: No uses tarjetas reales.</small>
+                <small style={{ color: '#888', fontSize: '0.8rem' }}>* Simulación: No uses tarjetas reales.</small>
               </div>
 
               <div style={{ display: 'flex', gap: '15px' }}>
                 <div style={{ flex: 1 }}>
                   <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Expiración</label>
-                  <input 
-                    type="text" 
-                    placeholder="MM/YY" 
+                  <input
+                    type="text"
+                    placeholder="MM/YY"
                     value={cardExpiry}
                     onChange={(e) => setCardExpiry(e.target.value)}
                     maxLength="5"
@@ -244,9 +244,9 @@ function HomePage() {
                 </div>
                 <div style={{ flex: 1 }}>
                   <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>CVV</label>
-                  <input 
-                    type="password" 
-                    placeholder="123" 
+                  <input
+                    type="password"
+                    placeholder="123"
                     value={cardCvv}
                     onChange={(e) => setCardCvv(e.target.value)}
                     maxLength="3"
@@ -255,13 +255,13 @@ function HomePage() {
                 </div>
               </div>
 
-              <button 
+              <button
                 onClick={handleReservationAndPayment}
                 disabled={processing}
-                className="car-card-button" 
-                style={{ 
-                  width: '100%', 
-                  marginTop: '20px', 
+                className="car-card-button"
+                style={{
+                  width: '100%',
+                  marginTop: '20px',
                   backgroundColor: processing ? '#ccc' : '#28a745',
                   cursor: processing ? 'not-allowed' : 'pointer'
                 }}
@@ -273,7 +273,7 @@ function HomePage() {
         </div>
       )}
 
-      {/* Filtros y Catálogo (Sin cambios mayores) */}
+      {/* Filtros y Catalogo  */}
       <div className="filters-container">
         <h2 className="catalog-title"> Selecciona tu alquiler</h2>
         <div className="filter-group search-group">

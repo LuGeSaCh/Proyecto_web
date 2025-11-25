@@ -1,7 +1,7 @@
 import { createPool } from "mysql2/promise";
 import dotenv from "dotenv/config";
 
-// Crea la conexión usando un Pool (mejor rendimiento)
+// Crea la conexion usando Pool
 export const pool = createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -10,7 +10,7 @@ export const pool = createPool({
   database: "RentadosDB",
 });
 
-// Función opcional para verificar conexión al iniciar
+// Funcion para verificar conexion al iniciar
 export async function checkConnection() {
   try {
     const connection = await pool.getConnection();

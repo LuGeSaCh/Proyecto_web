@@ -16,12 +16,12 @@ function CreateCarPage() {
         modelo: "",
         anio: "",
         precioPorDia: "",
-        tipoId: "", // 1: Sedán, 2: Camioneta, etc.
+        tipoId: "", // 1: Sedan, 2: Camioneta, etc.
         imagenURL: "",
         descripcion: ""
     });
 
-    // Tipos de vehículo (Basado en tu SQL seeders)
+    // Tipos de vehiculo (Basado en tu SQL seeders)
     const vehicleTypes = [
         { id: 1, nombre: "Sedán" },
         { id: 2, nombre: "Camioneta" },
@@ -39,7 +39,7 @@ function CreateCarPage() {
         setError("");
         setLoading(true);
 
-        // Validación básica
+        // Validacion basica
         if (!formData.tipoId) {
             setError("Por favor selecciona un tipo de vehículo.");
             setLoading(false);
@@ -57,13 +57,13 @@ function CreateCarPage() {
         try {
             const response = await axios.post("http://localhost:3001/api/carros", formData, {
                 headers: {
-                    Authorization: `Bearer ${token}` // Importante: Enviar el token
+                    Authorization: `Bearer ${token}` // Importante:enviar el token
                 }
             });
 
             alert("¡Vehículo publicado exitosamente!");
             console.log(response.data);
-            navigate("/profile"); // Redirigir al perfil para ver sus autos
+            navigate("/profile"); // Redirige al perfil para ver sus autos
 
         } catch (err) {
             console.error(err);
@@ -73,7 +73,7 @@ function CreateCarPage() {
         }
     };
 
-    // Redirección si no es propietario (Opcional, también lo protege el backend)
+    // Redirecciona si no es propietario
     if (isAuthenticated && user && user.rol !== 'propietario' && user.rol !== 'admin') {
         return (
             <div className="create-car-container">
@@ -94,18 +94,18 @@ function CreateCarPage() {
                 <div className="form-row">
                     <div className="form-group">
                         <label>Marca</label>
-                        <input 
-                            type="text" name="marca" 
-                            value={formData.marca} onChange={handleChange} 
-                            placeholder="Ej. Toyota" required 
+                        <input
+                            type="text" name="marca"
+                            value={formData.marca} onChange={handleChange}
+                            placeholder="Ej. Toyota" required
                         />
                     </div>
                     <div className="form-group">
                         <label>Modelo</label>
-                        <input 
-                            type="text" name="modelo" 
-                            value={formData.modelo} onChange={handleChange} 
-                            placeholder="Ej. Corolla" required 
+                        <input
+                            type="text" name="modelo"
+                            value={formData.modelo} onChange={handleChange}
+                            placeholder="Ej. Corolla" required
                         />
                     </div>
                 </div>
@@ -113,17 +113,17 @@ function CreateCarPage() {
                 <div className="form-row">
                     <div className="form-group">
                         <label>Año</label>
-                        <input 
-                            type="number" name="anio" 
-                            value={formData.anio} onChange={handleChange} 
+                        <input
+                            type="number" name="anio"
+                            value={formData.anio} onChange={handleChange}
                             placeholder="2022" required min="1990" max={new Date().getFullYear() + 1}
                         />
                     </div>
                     <div className="form-group">
                         <label>Precio por día ($)</label>
-                        <input 
-                            type="number" name="precioPorDia" 
-                            value={formData.precioPorDia} onChange={handleChange} 
+                        <input
+                            type="number" name="precioPorDia"
+                            value={formData.precioPorDia} onChange={handleChange}
                             placeholder="0.00" required step="0.01"
                         />
                     </div>
@@ -141,18 +141,18 @@ function CreateCarPage() {
 
                 <div className="form-group">
                     <label>URL de la Imagen</label>
-                    <input 
-                        type="url" name="imagenURL" 
-                        value={formData.imagenURL} onChange={handleChange} 
-                        placeholder="https://ejemplo.com/foto-carro.jpg" required 
+                    <input
+                        type="url" name="imagenURL"
+                        value={formData.imagenURL} onChange={handleChange}
+                        placeholder="https://ejemplo.com/foto-carro.jpg" required
                     />
                 </div>
 
                 <div className="form-group">
                     <label>Descripción</label>
-                    <textarea 
-                        name="descripcion" 
-                        value={formData.descripcion} onChange={handleChange} 
+                    <textarea
+                        name="descripcion"
+                        value={formData.descripcion} onChange={handleChange}
                         placeholder="Detalles importantes del vehículo (estado, extras, etc.)"
                     ></textarea>
                 </div>

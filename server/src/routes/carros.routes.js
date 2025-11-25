@@ -5,15 +5,15 @@ import { getCars, createCar, toggleCarAvailability, getMyCars, getCarsNearMe } f
 
 const router = Router();
 
-// --- PÚBLICO ---
-// Obtener catálogo general (filtra solo activos)
+//Publico
+// Obtiener catalogo general 
 router.get("/carros", getCars);
 
 
 // Obtener carros con filtros y cercanos al usuario logueado
 router.get("/carros/cerca", authRequired, getCarsNearMe);
 
-// --- PROPIETARIO (Requiere Auth) ---
+//Propietario (Requiere Auth)
 // Publicar un nuevo carro
 router.post("/carros", authRequired, createCar);
 

@@ -29,7 +29,7 @@ function NavBar() {
           {isAuthenticated ? (
             <li className="navbar-item">
               <Link to="/profile" className="navbar-link navbar-button-primary">
-                Mi Perfil 
+                Mi Perfil
               </Link>
             </li>
           ) : (

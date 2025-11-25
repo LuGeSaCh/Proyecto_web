@@ -1,5 +1,4 @@
 import React from "react";
-// Importamos el nuevo componente
 import AccordionItem from "../components/AccordionItem.jsx";
 import "./HelpPage.css";
 
@@ -7,7 +6,7 @@ function HelpPage() {
     // Definimos la lista de Preguntas Frecuentes
     const faqs = [
         {
-            // --- NUEVA PREGUNTA: Reservas y modificaciones ---
+            //Reservas y modificaciones
             question: "¡Ayuda! Necesito modificar o cancelar mi reserva de auto.",
             answer: (
                 <div>

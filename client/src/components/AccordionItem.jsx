@@ -22,7 +22,7 @@ function AccordionItem({ title, children }) {
                 aria-expanded={isOpen}
             >
                 <span className="title-text">{title}</span>
-                {/* Ícono de flecha que rota con el estado */}
+                {/*Icpno de flecha que rota con el estado */}
                 <span className="accordion-icon">
                     {/* Usamos un triangulo simple */}
                     &#9660;

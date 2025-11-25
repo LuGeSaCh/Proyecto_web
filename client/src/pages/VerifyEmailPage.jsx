@@ -6,7 +6,7 @@ import "./VerifyEmailPage.css";
 function VerifyEmailPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  
+
   const token = searchParams.get("token");
 
   const [status, setStatus] = useState("waiting");
@@ -18,7 +18,7 @@ function VerifyEmailPage() {
   }, [token]);
 
   const handleConfirm = () => {
-    setStatus("verifying"); 
+    setStatus("verifying");
 
     axios.post("http://localhost:3001/api/verify-email", { token })
       .then((response) => {
@@ -41,20 +41,20 @@ function VerifyEmailPage() {
   return (
     <div className="verify-container">
       <div className="verify-card">
-        
+
         {status === "waiting" && (
           <>
             <h2>Confirma tu verificación</h2>
             <p>Estás a un paso de activar tu cuenta en <strong>Rentados</strong>.</p>
             <p>Haz clic en el botón de abajo para validar tu correo electrónico.</p>
-            
+
             <div className="verify-actions">
-                <button onClick={handleConfirm} className="verify-button confirm-btn">
+              <button onClick={handleConfirm} className="verify-button confirm-btn">
                 Confirmar Cuenta
-                </button>
-                <button onClick={handleCancel} className="verify-button cancel-btn">
+              </button>
+              <button onClick={handleCancel} className="verify-button cancel-btn">
                 Cancelar
-                </button>
+              </button>
             </div>
           </>
         )}

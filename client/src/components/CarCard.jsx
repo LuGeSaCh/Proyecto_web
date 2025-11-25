@@ -1,6 +1,6 @@
 import React from "react";
 
-// Recibimos la nueva prop 'onSelect'
+//nueva prop 'onSelect'
 function CarCard({ car, onSelect }) {
     const { marca, modelo, anio, precioPorDia, imagenURL, descripcion } = car;
 
@@ -12,7 +12,7 @@ function CarCard({ car, onSelect }) {
                 <p>Año: {anio}</p>
                 <p className="car-card-price">${precioPorDia}<span>/día</span></p>
 
-                {/* Botón para seleccionar */}
+                {/* Btn para seleccionar */}
                 <button
                     className="car-card-button"
                     onClick={() => onSelect(car)}

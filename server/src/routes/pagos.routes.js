@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { createPayment, getInvoice } from "../controllers/pagos.controller.js";
-import { authRequired } from "../middlewares/auth.middleware.js"; // Descomentar si quieres protegerlo
+import { authRequired } from "../middlewares/auth.middleware.js"; 
 
 const router = Router();
 

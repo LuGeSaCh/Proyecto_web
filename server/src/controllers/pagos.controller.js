@@ -1,17 +1,17 @@
 import { pool } from "../config/db.js";
 
-// Esta función actúa como si fuera el banco. No toca la base de datos.
+//Funcion actua como si es el banco.No toca la base de datos.
 const procesarPagoConBanco = async (datosTarjeta, monto) => {
   return new Promise((resolve, reject) => {
     console.log(`Procesando cobro de $${monto} con el banco simulado...`);
-    
+
     // Simulamos un retraso de red de 2 segundos (para que se sienta real)
     setTimeout(() => {
-      // Si el número de tarjeta no viene o termina en "0000", rechazamos el pago.
+      // Si el num de tarjeta no viene o termina en "0000", rechazamos el pago.
       if (!datosTarjeta || !datosTarjeta.numero || datosTarjeta.numero.endsWith("0000")) {
         reject(new Error("Fondos insuficientes o tarjeta rechazada por el banco."));
       } else {
-        // Si todo está bien, aprobamos.
+        // Si todo esta bien,aprobamos.
         resolve({ transaccionId: "TXN-" + Date.now(), estado: "aprobado" });
       }
     }, 2000);
@@ -19,21 +19,21 @@ const procesarPagoConBanco = async (datosTarjeta, monto) => {
 };
 
 export const createPayment = async (req, res) => {
-  // Recibimos 'datosTarjeta' del front para pasárselo al mock
+  // Recibimos 'datosTarjeta' del front para pasar al mock
   const { alquilerId, monto, metodoPago, datosTarjeta } = req.body;
-  const userId = req.user.id; 
+  const userId = req.user.id;
 
   try {
     // Verificar que el alquiler existe y pertenece al usuario que intenta pagar
     const [alquiler] = await pool.query(
-        "SELECT * FROM Alquileres WHERE id = ? AND clienteId = ?", 
-        [alquilerId, userId]
+      "SELECT * FROM Alquileres WHERE id = ? AND clienteId = ?",
+      [alquilerId, userId]
     );
 
     if (alquiler.length === 0) {
-        return res.status(403).json({ message: "No tienes permiso para pagar este alquiler o no existe." });
+      return res.status(403).json({ message: "No tienes permiso para pagar este alquiler o no existe." });
     }
-    // Si esto falla (reject), saltará directo al bloque 'catch' y no se guardará nada.
+    // Si esto falla (reject), va a saltar directo al bloque 'catch' y no se va a guardar nada.
     await procesarPagoConBanco(datosTarjeta, monto);
 
     // registramos el pago en nuestra base de datos
@@ -58,10 +58,10 @@ export const createPayment = async (req, res) => {
   }
 };
 
-// --- 3. OBTENER FACTURA (Tu función existente) ---
+//  OBTENER FACTURA 
 export const getInvoice = async (req, res) => {
   const { id } = req.params;
-  const userId = req.user.id; 
+  const userId = req.user.id;
 
   try {
     const query = `

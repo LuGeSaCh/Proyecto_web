@@ -2,13 +2,13 @@
 CREATE DATABASE IF NOT EXISTS RentadosDB;
 USE RentadosDB;
 
--- 2. Tabla de Tipos de Vehículo
+-- 2. Tabla de Tipos de Vehiculo
 CREATE TABLE IF NOT EXISTS TiposVehiculo (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL UNIQUE
 );
 
--- 3. Tabla de Usuarios (Con Ubicación para recomendaciones)
+-- 3. Tabla de Usuarios (Con Ubicacion para recomendaciones)
 CREATE TABLE IF NOT EXISTS Usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -16,12 +16,12 @@ CREATE TABLE IF NOT EXISTS Usuarios (
     contrasenia VARCHAR(255) NOT NULL,
     rol ENUM('cliente', 'propietario', 'admin') DEFAULT 'cliente',
     telefono VARCHAR(20),
-    departamento VARCHAR(50), -- Para geolocalización (Ej: San Salvador)
-    municipio VARCHAR(50),    -- Para geolocalización (Ej: Mejicanos)
+    departamento VARCHAR(50), -- Para geolocalizacion (Ej: San Salvador)
+    municipio VARCHAR(50),    -- Para geolocalizacion (Ej: Mejicanos)
     fechaCreacion DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- 4. Tabla de Vehículos
+-- 4. Tabla de Vehiculos
 CREATE TABLE IF NOT EXISTS Vehiculos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     propietarioId INT NOT NULL,
@@ -73,9 +73,9 @@ ADD COLUMN tokenVerificacion VARCHAR(100);
 ALTER TABLE Usuarios 
 ADD COLUMN tokenExpiracion DATETIME;
 
--- =============================================
--- DATOS DE PRUEBA (SEEDERS)
--- =============================================
+
+-- DATOS DE PRUEBA
+
 
 INSERT IGNORE INTO TiposVehiculo (nombre) VALUES ('Sedán'), ('Camioneta'), ('Deportivo'), ('Pick-up');
 
