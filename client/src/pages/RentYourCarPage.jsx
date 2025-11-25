@@ -16,7 +16,7 @@ function RentYourCarPage() {
             Envíanos un correo con los detalles de tu vehículo (marca, modelo, año) y nos pondremos en contacto contigo para explicarte los beneficios y los siguientes pasos.
           </p>
           <a href="mailto:socios@rentados.com" className="contact-email-link">
-            rentados@gmail.com
+            soporte@rentados.com
           </a>
         </div>
       </div>

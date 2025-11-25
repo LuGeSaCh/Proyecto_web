@@ -1,27 +1,33 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext"; 
 import CarCard from "../components/CarCard.jsx";
 import "./HomePage.css";
 
 function HomePage() {
   const navigate = useNavigate();
+  const { user, isAuthenticated } = useAuth();
+
+  // Estados existentes
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Filtros
+  // Nuevo estado para carros cercanos
+  const [nearbyCars, setNearbyCars] = useState([]);
+  const [userLocation, setUserLocation] = useState(""); // Para mostrar el nombre del depto
+
+  // Filtros existentes
   const [searchTerm, setSearchTerm] = useState("");
   const [yearFilter, setYearFilter] = useState("");
   const [priceOrder, setPriceOrder] = useState("");
   const [pickupDate, setPickupDate] = useState("");
   const [returnDate, setReturnDate] = useState("");
 
-  // Estado para el proceso de reserva
+  // Estado para reserva y pago
   const [selectedCar, setSelectedCar] = useState(null);
   const [processing, setProcessing] = useState(false);
-
-  // Estados para el formulario de pago
   const [paymentMethod, setPaymentMethod] = useState("Tarjeta de Crédito");
   const [cardNumber, setCardNumber] = useState("");
   const [cardExpiry, setCardExpiry] = useState("");
@@ -29,7 +35,10 @@ function HomePage() {
 
   useEffect(() => {
     loadCars();
-  }, []);
+    if (isAuthenticated) {
+      loadNearbyCars();
+    }
+  }, [isAuthenticated]); 
 
   const loadCars = () => {
     setLoading(true);
@@ -47,7 +56,22 @@ function HomePage() {
       });
   };
 
-  // Calculo de dias y precio
+
+  const loadNearbyCars = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await axios.get("http://localhost:3001/api/carros/cerca", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      setNearbyCars(res.data.carros);
+      setUserLocation(res.data.ubicacionUsuario);
+    } catch (err) {
+      console.log("No se pudieron cargar carros cercanos o el usuario no tiene ubicación", err);
+    }
+  };
+
+
   const calculateDays = () => {
     if (!pickupDate || !returnDate) return 1;
     const start = new Date(pickupDate);
@@ -60,11 +84,9 @@ function HomePage() {
   const days = calculateDays();
   const totalPrice = selectedCar ? (selectedCar.precioPorDia * days).toFixed(2) : 0;
 
-  //Logica de reserva y pago
   const handleReservationAndPayment = async () => {
     const token = localStorage.getItem("token");
 
-    // 1. Validaciones previas
     if (!token) {
       alert("Debes iniciar sesión para reservar.");
       navigate("/login");
@@ -80,9 +102,8 @@ function HomePage() {
     }
 
     try {
-      setProcessing(true); // Activa  texto de carga
+      setProcessing(true);
 
-      // 1-Crear la reserva(Bloquea el carro)
       const rentalData = {
         vehiculoId: selectedCar.id,
         fechaInicio: pickupDate,
@@ -97,15 +118,13 @@ function HomePage() {
       );
 
       const { alquilerId } = rentalResponse.data;
-      console.log("Reserva creada, ID:", alquilerId);
 
-      //2- Procesar pago (Confirma la reserva)
       const paymentData = {
         alquilerId: alquilerId,
         monto: totalPrice,
         metodoPago: paymentMethod,
         datosTarjeta: {
-          numero: cardNumber, // El backend va a validar esto (no debe terminar en 0000)
+          numero: cardNumber,
           expiracion: cardExpiry,
           cvv: cardCvv
         }
@@ -117,15 +136,14 @@ function HomePage() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // Exito
       alert("¡Pago aprobado y reserva confirmada! Disfruta tu viaje.");
-      setSelectedCar(null); // Cierra resumen
-      setCardNumber(""); // Limpia formulario
-      loadCars(); // Recarga carros (el que alquilaste ya no va salir o salir inactivo)
+      setSelectedCar(null);
+      setCardNumber("");
+      loadCars();
+      if (isAuthenticated) loadNearbyCars(); 
 
     } catch (err) {
       console.error(err);
-      // Si falla el backend nos manda un mensaje (ej: "Fondos insuficientes")
       const msg = err.response?.data?.message || "Ocurrió un error al procesar la reserva.";
       alert("Error: " + msg);
     } finally {
@@ -133,7 +151,7 @@ function HomePage() {
     }
   };
 
-  // Filtros de busqueda
+  // Filtros del catalogo general
   const processedCars = cars
     .filter((car) => {
       const term = searchTerm.toLowerCase();
@@ -157,7 +175,6 @@ function HomePage() {
   return (
     <div className="home-page-container">
 
-      {/*Seccion de resumen y pago (Visible al seleccionar carro)*/}
       {selectedCar && (
         <div className="booking-summary" style={{
           backgroundColor: '#fff',
@@ -168,7 +185,7 @@ function HomePage() {
           marginBottom: '30px',
           animation: 'fadeIn 0.4s ease'
         }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
             <h2 style={{ margin: 0, color: '#333' }}>Finalizar Reserva</h2>
             <button
               onClick={() => setSelectedCar(null)}
@@ -177,8 +194,6 @@ function HomePage() {
           </div>
 
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '30px' }}>
-
-            {/* Columna Izquierda: Detalles del Carro */}
             <div style={{ flex: '1 1 300px' }}>
               <div style={{ display: 'flex', gap: '15px', marginBottom: '15px' }}>
                 <img
@@ -201,22 +216,8 @@ function HomePage() {
               </div>
             </div>
 
-            {/* Columna Derecha: Formulario de Pago */}
             <div style={{ flex: '1 1 300px', borderLeft: '1px solid #eee', paddingLeft: '30px' }}>
               <h3 style={{ marginTop: 0 }}>Método de Pago</h3>
-
-              <div style={{ marginBottom: '15px' }}>
-                <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Tipo de Tarjeta</label>
-                <select
-                  value={paymentMethod}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                  style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }}
-                >
-                  <option>Tarjeta de Crédito</option>
-                  <option>Tarjeta de Débito</option>
-                </select>
-              </div>
-
               <div style={{ marginBottom: '15px' }}>
                 <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Número de Tarjeta</label>
                 <input
@@ -227,45 +228,18 @@ function HomePage() {
                   maxLength="19"
                   style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }}
                 />
-                <small style={{ color: '#888', fontSize: '0.8rem' }}>* Simulación: No uses tarjetas reales.</small>
               </div>
-
               <div style={{ display: 'flex', gap: '15px' }}>
                 <div style={{ flex: 1 }}>
                   <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Expiración</label>
-                  <input
-                    type="text"
-                    placeholder="MM/YY"
-                    value={cardExpiry}
-                    onChange={(e) => setCardExpiry(e.target.value)}
-                    maxLength="5"
-                    style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }}
-                  />
+                  <input type="text" placeholder="MM/YY" value={cardExpiry} onChange={(e) => setCardExpiry(e.target.value)} maxLength="5" style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
                 </div>
                 <div style={{ flex: 1 }}>
                   <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>CVV</label>
-                  <input
-                    type="password"
-                    placeholder="123"
-                    value={cardCvv}
-                    onChange={(e) => setCardCvv(e.target.value)}
-                    maxLength="3"
-                    style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }}
-                  />
+                  <input type="password" placeholder="123" value={cardCvv} onChange={(e) => setCardCvv(e.target.value)} maxLength="3" style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} />
                 </div>
               </div>
-
-              <button
-                onClick={handleReservationAndPayment}
-                disabled={processing}
-                className="car-card-button"
-                style={{
-                  width: '100%',
-                  marginTop: '20px',
-                  backgroundColor: processing ? '#ccc' : '#28a745',
-                  cursor: processing ? 'not-allowed' : 'pointer'
-                }}
-              >
+              <button onClick={handleReservationAndPayment} disabled={processing} className="car-card-button" style={{ width: '100%', marginTop: '20px', backgroundColor: processing ? '#ccc' : '#28a745', cursor: processing ? 'not-allowed' : 'pointer' }}>
                 {processing ? "Procesando pago..." : `Pagar $${totalPrice}`}
               </button>
             </div>
@@ -273,9 +247,22 @@ function HomePage() {
         </div>
       )}
 
-      {/* Filtros y Catalogo  */}
+      {isAuthenticated && nearbyCars.length > 0 && (
+        <div className="nearby-section">
+          <h2 className="section-title-special">
+            📍 Cerca de ti en <span className="highlight-location">{userLocation}</span>
+          </h2>
+          <div className="catalog-grid">
+            {nearbyCars.map((car) => (
+              <CarCard key={car.id} car={car} onSelect={setSelectedCar} />
+            ))}
+          </div>
+          <hr className="section-divider" />
+        </div>
+      )}
+
       <div className="filters-container">
-        <h2 className="catalog-title"> Selecciona tu alquiler</h2>
+        <h2 className="catalog-title">Catálogo General</h2>
         <div className="filter-group search-group">
           <input
             type="text"
@@ -285,39 +272,22 @@ function HomePage() {
             className="filter-input"
           />
         </div>
-
         <div className="filter-group">
           <input
             type="number"
-            placeholder="Año (ej. 2020)"
+            placeholder="Año"
             value={yearFilter}
             onChange={(e) => setYearFilter(e.target.value)}
             className="filter-input"
           />
         </div>
-
         <div className="filter-group date-group">
-          <input
-            type="date"
-            value={pickupDate}
-            onChange={(e) => setPickupDate(e.target.value)}
-            className="filter-input"
-          /> a
+          <input type="date" value={pickupDate} onChange={(e) => setPickupDate(e.target.value)} className="filter-input" /> a
           <span className="date-separator"></span>
-          <input
-            type="date"
-            value={returnDate}
-            onChange={(e) => setReturnDate(e.target.value)}
-            className="filter-input"
-          />
+          <input type="date" value={returnDate} onChange={(e) => setReturnDate(e.target.value)} className="filter-input" />
         </div>
-
         <div className="filter-group">
-          <select
-            value={priceOrder}
-            onChange={(e) => setPriceOrder(e.target.value)}
-            className="filter-select"
-          >
+          <select value={priceOrder} onChange={(e) => setPriceOrder(e.target.value)} className="filter-select">
             <option value="">Ordenar precio</option>
             <option value="asc">Menor a Mayor</option>
             <option value="desc">Mayor a Menor</option>
