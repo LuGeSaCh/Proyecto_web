@@ -22,4 +22,5 @@ app.use("/api", carrosRoutes);
 app.use("/api", usuariosRoutes );
 app.use("/api", paymentsRoutes);
 app.use("/api", rentalsRoutes);
+
 export default app;
